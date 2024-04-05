@@ -29,6 +29,7 @@ function Header() {
       title: 'Logout',
       icon: AiOutlinePoweroff,
       onClick: () => {
+        localStorage.removeItem('token');
         navigate('/login');
       },
     },

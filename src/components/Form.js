@@ -1,10 +1,10 @@
 import { Listbox, Menu, Switch } from '@headlessui/react';
-import React from 'react';
 import { BiLoaderCircle } from 'react-icons/bi';
 import DatePicker from 'react-datepicker';
 import { FaCheck } from 'react-icons/fa';
+import React, { useState } from 'react';
 
-export function Input({ label, name, type, color, placeholder, register }) {
+export function Input({ label, name, type, color, placeholder, value, onChange, register, required }) {
   return (
     <div className="text-sm w-full">
       <label
@@ -19,13 +19,19 @@ export function Input({ label, name, type, color, placeholder, register }) {
         {...register}
         type={type}
         placeholder={placeholder}
+        value={value} // Pass the value prop
+        onChange={onChange} // Pass the onChange prop
         className={`w-full bg-transparent text-sm mt-3 p-4 border ${
           color ? 'border-border font-light' : 'border-white text-white'
         } rounded-lg focus:border focus:border-subMain`}
+        required={required} // Pass the required prop if needed
       />
     </div>
   );
 }
+
+
+
 
 // button
 

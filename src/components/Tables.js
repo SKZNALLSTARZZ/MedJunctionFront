@@ -5,6 +5,7 @@ import { FiEdit, FiEye } from 'react-icons/fi';
 import { RiDeleteBin6Line, RiDeleteBinLine } from 'react-icons/ri';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const thclass = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
 const tdclass = 'text-start text-sm py-4 px-2 whitespace-nowrap';
@@ -440,10 +441,28 @@ export function DoctorsTable({ data, functions, doctor }) {
     {
       title: 'Delete',
       icon: RiDeleteBin6Line,
-      onClick: () => {
-        toast.error('This feature is not available yet');
+      onClick: (data) => {
+        const token = localStorage.getItem('token');
+        const id = data.id;
+        console.log(data.id);
+        axios.delete('http://127.0.0.1:8000/api/Doctor/${id}', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(response => {
+          if (response.status === 200) {
+            toast.success('Item deleted successfully');
+          } else {
+            toast.error('Failed to delete item');
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting item:', error);
+          toast.error('Failed to delete item');
+        });
       },
-    },
+    }
   ];
   return (
     <table className="table-auto w-full">
@@ -453,7 +472,7 @@ export function DoctorsTable({ data, functions, doctor }) {
           <th className={thclass}>{doctor ? 'Doctor' : 'Receptionist'}</th>
           <th className={thclass}>Created At</th>
           <th className={thclass}>Phone</th>
-          <th className={thclass}>Title</th>
+          <th className={thclass}>Address</th>
           <th className={thclass}>Email</th>
           <th className={thclass}>Actions</th>
         </tr>
@@ -467,22 +486,16 @@ export function DoctorsTable({ data, functions, doctor }) {
             <td className={tdclass}>{index + 1}</td>
             <td className={tdclass}>
               <div className="flex gap-4 items-center">
-                <span className="w-12">
-                  <img
-                    src={item.user.image}
-                    alt={item.user.title}
-                    className="w-full h-12 rounded-full object-cover border border-border"
-                  />
-                </span>
-                <h4 className="text-sm font-medium">{item.user.title}</h4>
+                
+                <h4 className="text-sm font-medium">{item.name}</h4>
               </div>
             </td>
             <td className={tdclass}>12 May, 2021</td>
             <td className={tdclass}>
-              <p className="text-textGray">{item.user.phone}</p>
+              <p className="text-textGray">{item.phone}</p>
             </td>
-            <td className={tdclass}>{item.title}</td>
-            <td className={tdclass}>{item.user.email}</td>
+            <td className={tdclass}>{item.address}</td>
+            <td className={tdclass}>{item.name}</td>
 
             <td className={tdclass}>
               <MenuSelect datas={DropDown1} item={item}>

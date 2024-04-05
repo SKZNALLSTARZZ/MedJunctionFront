@@ -1,17 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdOutlineCloudDownload } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { BiPlus } from 'react-icons/bi';
 import Layout from '../../Layout';
 import { Button } from '../../components/Form';
 import { DoctorsTable } from '../../components/Tables';
-import { doctorsData } from '../../components/Datas';
 import { useNavigate } from 'react-router-dom';
 import AddDoctorModal from '../../components/Modals/AddDoctorModal';
+import axios from 'axios';
 
 function Doctors() {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+  const fetchDoctors = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://127.0.0.1:8000/api/Doctor', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setDoctors(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.error('Error fetching doctors data:', error.message);
+    }
+  };
 
   const onCloseModal = () => {
     setIsOpen(false);
@@ -73,7 +92,7 @@ function Doctors() {
         <div className="mt-8 w-full overflow-x-scroll">
           <DoctorsTable
             doctor={true}
-            data={doctorsData}
+            data={doctors}
             functions={{
               preview: preview,
             }}
