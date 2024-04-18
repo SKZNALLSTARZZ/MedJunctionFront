@@ -10,6 +10,12 @@ import axios from 'axios';
 const thclass = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
 const tdclass = 'text-start text-sm py-4 px-2 whitespace-nowrap';
 
+const formatDate = (timestamp) => {
+  const dateObject = new Date(timestamp);
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'});
+  return dateFormatter.format(dateObject);
+};
+
 export function Transactiontable({ data, action, functions }) {
   const DropDown1 = [
     {
@@ -381,35 +387,35 @@ export function PatientTable({ data, functions, used }) {
                 {!used && (
                   <span className="w-12">
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={item.user.img_url}
+                      alt={item.name}
                       className="w-full h-12 rounded-full object-cover border border-border"
                     />
                   </span>
                 )}
 
                 <div>
-                  <h4 className="text-sm font-medium">{item.title}</h4>
+                  <h4 className="text-sm font-medium">{item.name}</h4>
                   <p className="text-xs mt-1 text-textGray">{item.phone}</p>
                 </div>
               </div>
             </td>
-            <td className={tdclasse}>{item.date}</td>
+            <td className={tdclasse}>{formatDate(item.created_at)}</td>
 
             <td className={tdclasse}>
               <span
                 className={`py-1 px-4 ${
-                  item.gender === 'Male'
+                  item.sex === 'male'
                     ? 'bg-subMain text-subMain'
                     : 'bg-orange-500 text-orange-500'
                 } bg-opacity-10 text-xs rounded-xl`}
               >
-                {item.gender}
+                {item.sex}
               </span>
             </td>
             {!used && (
               <>
-                <td className={tdclasse}>{item.blood}</td>
+                <td className={tdclasse}>{item.blood_group}</td>
                 <td className={tdclasse}>{item.age}</td>
               </>
             )}

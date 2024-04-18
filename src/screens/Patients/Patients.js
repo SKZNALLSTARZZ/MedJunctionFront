@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Layout from '../../Layout';
 import { memberData, sortsDatas } from '../../components/Datas';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,13 +8,52 @@ import { MdFilterList, MdOutlineCalendarMonth } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { Button, FromToDate, Select } from '../../components/Form';
 import { PatientTable } from '../../components/Tables';
+import axios from 'axios';
 
 function Patients() {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
   const [gender, setGender] = useState(sortsDatas.genderFilter[0]);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
+  const [patients, setPatients] = useState([]);
+  const [patientsCount, setPatientsCount] = useState([]);
   const [startDate, endDate] = dateRange;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const fetchPatients = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Make multiple GET requests concurrently
+      const [patientsRes, countRes] = await Promise.all([
+        axios.get('http://127.0.0.1:8000/api/Patient', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.get('http://127.0.0.1:8000/api/Patient/Count', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      ]);
+      
+      // Handle the responses here
+      setPatients(patientsRes.data);
+      setPatientsCount(countRes.data)
+      console.log('Patients data:', patientsRes.data);
+      console.log('Count data:', countRes.data);
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    }
+  };
+
+
+  const memoizedData = useMemo(() => patients, [patients]);
 
   const sorts = [
     {
@@ -35,21 +74,21 @@ function Patients() {
     {
       id: 1,
       title: 'Today Patients',
-      value: '10',
+      value: patientsCount.daily,
       color: ['bg-subMain', 'text-subMain'],
       icon: BiTime,
     },
     {
       id: 2,
       title: 'Monthly Patients',
-      value: '230',
+      value: patientsCount.monthly,
       color: ['bg-orange-500', 'text-orange-500'],
       icon: BsCalendarMonth,
     },
     {
       id: 3,
       title: 'Yearly Patients',
-      value: '1,500',
+      value: patientsCount.yearly,
       color: ['bg-green-500', 'text-green-500'],
       icon: MdOutlineCalendarMonth,
     },
@@ -143,7 +182,7 @@ function Patients() {
         </div>
         <div className="mt-8 w-full overflow-x-scroll">
           <PatientTable
-            data={memberData}
+            data={patients}
             functions={{
               preview: previewPayment,
             }}
