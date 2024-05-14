@@ -4,13 +4,21 @@ import { toast } from 'react-hot-toast';
 import { BiLoaderCircle } from 'react-icons/bi';
 import { FiUploadCloud } from 'react-icons/fi';
 
-const Uploader = ({ setImage, image }) => {
+const Uploader = ({ setImage }) => {
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // upload file
   const onDrop = useCallback(async (acceptedFiles) => {
-    toast.error('This feature is not available yet');
-  }, []);
+    const file = acceptedFiles[0];
+    setImagePreview(URL.createObjectURL(file));
+    setImage(file); 
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); 
+      toast.success('File uploaded successfully');
+    }, 2000);
+  }, [setImage]);
 
   const { getRootProps, getInputProps } = useDropzone({
     multiple: false,
@@ -41,7 +49,7 @@ const Uploader = ({ setImage, image }) => {
           </div>
         ) : (
           <img
-            src={image ? image : 'http://placehold.it/300x300'}
+            src={imagePreview || 'http://placehold.it/300x300'}
             alt="preview"
             className=" w-full h-32 rounded object-cover"
           />

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect} from 'react';
 import Layout from '../../Layout';
-import { memberData, sortsDatas } from '../../components/Datas';
+import { sortsDatas } from '../../components/Datas';
 import { Link, useNavigate } from 'react-router-dom';
 import { BiChevronDown, BiPlus, BiTime } from 'react-icons/bi';
 import { BsCalendarMonth } from 'react-icons/bs';
@@ -11,18 +11,21 @@ import { PatientTable } from '../../components/Tables';
 import axios from 'axios';
 
 function Patients() {
-  const apiUrl = process.env.REACT_APP_API_URL;
   const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
   const [gender, setGender] = useState(sortsDatas.genderFilter[0]);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [patients, setPatients] = useState([]);
   const [patientsCount, setPatientsCount] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
   const [startDate, endDate] = dateRange;
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchPatients();
-  }, []);
+    const filtered = patients.filter(patient => patient.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredPatients(filtered);
+  }, [patients, query]);
 
   const fetchPatients = async () => {
     try {
@@ -30,7 +33,7 @@ function Patients() {
       
       // Make multiple GET requests concurrently
       const [patientsRes, countRes] = await Promise.all([
-        axios.get('http://127.0.0.1:8000/api/Patient', {
+        axios.get('http://127.0.0.1:8000/api/Patient/patients', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -45,30 +48,47 @@ function Patients() {
       // Handle the responses here
       setPatients(patientsRes.data);
       setPatientsCount(countRes.data)
-      console.log('Patients data:', patientsRes.data);
-      console.log('Count data:', countRes.data);
     } catch (err) {
       console.error('Error fetching data:', err.message);
     }
   };
 
+  const handleFilterButtonClick = () => {
+    const filtered = patients.filter(patient => {
+      const createdAt = new Date(patient.created_at);
+      return patient.name.toLowerCase().includes(query.toLowerCase()) && 
+        (!startDate || createdAt >= startDate) &&
+        (!endDate || createdAt <= endDate) &&
+        (!gender.name || patient.sex.toLowerCase() === gender.name.toLowerCase()); 
+    });
+    let sortedFiltered = [...filtered]; 
 
-  const memoizedData = useMemo(() => patients, [patients]);
+    if (status.name === "Newest Patients") {
+      
+      sortedFiltered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    } else {
+      sortedFiltered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    }
 
-  const sorts = [
-    {
-      id: 2,
-      selected: status,
-      setSelected: setStatus,
-      datas: sortsDatas.filterPatient,
-    },
-    {
-      id: 3,
-      selected: gender,
-      setSelected: setGender,
-      datas: sortsDatas.genderFilter,
-    },
-  ];
+    setFilteredPatients(sortedFiltered);
+  };
+  
+  const deletePatient = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://127.0.0.1:8000/api/Patient/patients/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPatients(patients.filter(patient => patient.id !== id));
+      toast.success('Patient deleted successfully');
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast.error('Failed to delete patient. Please try again later.');
+    }
+  };
+
   // boxes
   const boxes = [
     {
@@ -95,7 +115,7 @@ function Patients() {
   ];
 
   // preview
-  const previewPayment = (id) => {
+  const previewPatient = (id) => {
     navigate(`/patients/preview/${id}`);
   };
 
@@ -144,26 +164,35 @@ function Patients() {
         data-aos-offset="200"
         className="bg-white my-8 rounded-xl border-[1px] border-border p-5"
       >
+        {/* Search input */}
         <div className="grid lg:grid-cols-5 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-2">
           <input
             type="text"
             placeholder='Search "Patients"'
             className="h-14 text-sm text-main rounded-md bg-dry border border-border px-4"
+            onChange={(e) => setQuery(e.target.value)}
           />
           {/* sort  */}
-          {sorts.map((item) => (
-            <Select
-              key={item.id}
-              selectedPerson={item.selected}
-              setSelectedPerson={item.setSelected}
-              datas={item.datas}
+           <Select
+              selectedPerson={status}
+              setSelectedPerson={setStatus}
+              datas={sortsDatas.filterPatient}
             >
               <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
-                <p>{item.selected.name}</p>
+                <p>{status?.name}</p>
                 <BiChevronDown className="text-xl" />
               </div>
             </Select>
-          ))}
+            <Select
+              selectedPerson={gender}
+              setSelectedPerson={setGender}
+              datas={sortsDatas.genderFilter}
+            >
+              <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
+                <p>{gender?.name}</p>
+                <BiChevronDown className="text-xl" />
+              </div>
+            </Select>
           {/* date */}
           <FromToDate
             startDate={startDate}
@@ -175,16 +204,15 @@ function Patients() {
           <Button
             label="Filter"
             Icon={MdFilterList}
-            onClick={() => {
-              toast.error('Filter data is not available yet');
-            }}
+            onClick={handleFilterButtonClick}
           />
         </div>
         <div className="mt-8 w-full overflow-x-scroll">
           <PatientTable
-            data={patients}
+            data={filteredPatients}
             functions={{
-              preview: previewPayment,
+              preview: previewPatient,
+              deletePatient: deletePatient,
             }}
             used={false}
           />

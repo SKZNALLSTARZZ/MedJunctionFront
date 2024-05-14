@@ -1,7 +1,9 @@
 import React from 'react';
+import axios from 'axios';
 import Layout from '../../Layout';
 import { patientTab } from '../../components/Datas';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import MedicalRecord from './MedicalRecord';
 import AppointmentsUsed from '../../components/UsedComp/AppointmentsUsed';
@@ -14,6 +16,29 @@ import DentalChart from './DentalChart';
 
 function PatientProfile() {
   const [activeTab, setActiveTab] = React.useState(1);
+  const { id } = useParams(); 
+  const [patient, setPatient] = React.useState([]);
+  const [patientEmail, setPatientEmail] = React.useState("");
+
+  const fetchPatientData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://127.0.0.1:8000/api/Patient/patients/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPatient(response.data[0]);
+      setPatientEmail(response.data[0].user.email);
+
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchPatientData();
+  }, []);
 
   const tabPanel = () => {
     switch (activeTab) {
@@ -38,7 +63,8 @@ function PatientProfile() {
     }
   };
 
-  return (
+
+ return (
     <Layout>
       <div className="flex items-center gap-4">
         <Link
@@ -47,7 +73,7 @@ function PatientProfile() {
         >
           <IoArrowBackOutline />
         </Link>
-        <h1 className="text-xl font-semibold">Amani Mmassy</h1>
+        <h1 className="text-xl font-semibold">{patient.name}</h1>
       </div>
       <div className=" grid grid-cols-12 gap-6 my-8 items-start">
         <div
@@ -57,15 +83,15 @@ function PatientProfile() {
           data-aos-offset="200"
           className="col-span-12 flex-colo gap-6 lg:col-span-4 bg-white rounded-xl border-[1px] border-border p-6 lg:sticky top-28"
         >
-          <img
-            src="/images/user7.png"
-            alt="setting"
-            className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
-          />
+              <img
+                src={`data:image/jpeg;base64,${patient.img_data}`}
+                alt="Patient Image"
+                className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
+              />
           <div className="gap-2 flex-colo">
-            <h2 className="text-sm font-semibold">Amani Mmassy</h2>
-            <p className="text-xs text-textGray">amanimmassy@gmail.com</p>
-            <p className="text-xs">+254 712 345 678</p>
+            <h2 className="text-sm font-semibold">{patient.name}</h2>
+            <p className="text-xs text-textGray">{patientEmail}</p>
+            <p className="text-xs">{patient.phone}</p>
           </div>
           {/* tabs */}
           <div className="flex-colo gap-3 px-2 xl:px-12 w-full">
@@ -99,6 +125,6 @@ function PatientProfile() {
       </div>
     </Layout>
   );
-}
+} 
 
 export default PatientProfile;

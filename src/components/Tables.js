@@ -329,20 +329,25 @@ export function ServiceTable({ data, onEdit }) {
 
 // patient table
 export function PatientTable({ data, functions, used }) {
+  const { deletePatient, preview } = functions;
   const DropDown1 = !used
     ? [
         {
           title: 'View',
           icon: FiEye,
-          onClick: (data) => {
+          onClick: async (data) => {
             functions.preview(data.id);
           },
         },
         {
           title: 'Delete',
           icon: RiDeleteBin6Line,
-          onClick: () => {
-            toast.error('This feature is not available yet');
+          onClick: async (data) => {
+            try {
+              await deletePatient(data.id); 
+            } catch (error) {
+              console.error('Error deleting patient:', error);
+            }
           },
         },
       ]
@@ -350,7 +355,7 @@ export function PatientTable({ data, functions, used }) {
         {
           title: 'View',
           icon: FiEye,
-          onClick: (data) => {
+          onClick: async (data) => {
             functions.preview(data.id);
           },
         },
@@ -386,11 +391,13 @@ export function PatientTable({ data, functions, used }) {
               <div className="flex gap-4 items-center">
                 {!used && (
                   <span className="w-12">
-                    <img
-                      src={item.user.img_url}
-                      alt={item.name}
-                      className="w-full h-12 rounded-full object-cover border border-border"
-                    />
+                    {item.img_data && (
+                        <img
+                            src={`data:image/jpeg;base64,${item.img_data}`}
+                            alt="Patient Image"
+                            className="w-full h-12 rounded-full object-cover border border-border"
+                        />
+                    )}
                   </span>
                 )}
 

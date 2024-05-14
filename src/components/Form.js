@@ -125,7 +125,7 @@ export function Switchi({ checked, onChange }) {
 
 // textarea
 
-export function Textarea({ label, name, register, placeholder, rows }) {
+export function Textarea({ label, name, register, placeholder, rows, value, onChange }) {
   return (
     <div className="text-sm w-full">
       <label className={'text-black text-sm'}>{label}</label>
@@ -134,6 +134,8 @@ export function Textarea({ label, name, register, placeholder, rows }) {
         rows={rows}
         {...register}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className={`focus:border-subMain w-full bg-transparent text-sm mt-3 p-4 border border-border rounded font-light 
          `}
       />
