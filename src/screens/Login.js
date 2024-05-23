@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { Button, Input } from '../components/Form';
+import { Button, Checkbox, Input } from '../components/Form';
 import { BiLogInCircle } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import Axios
+import axios from 'axios'; 
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isChecked, setIsChecked] = useState('');
+
+  const handleChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,11 +22,14 @@ function Login() {
       const response = await axios.post('http://127.0.0.1:8000/api/login', {
         email,
         password,
+        isChecked,
       });
 
       if (response.status === 200) {
         const token = response.data.token;
-        localStorage.setItem('token', token); 
+        const role = response.data.role;
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', role) 
         console.log(token);
         navigate('/');
       } else {
@@ -62,6 +70,13 @@ function Login() {
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
+        <Checkbox
+          label="Remember me!"
+          name="rememberMeCB"
+          checked={isChecked}
+          onChange={handleChange}
+        />
+        <br/>
         <Button
           type="Submit"
           label="Login"

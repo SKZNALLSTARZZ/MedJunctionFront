@@ -37,7 +37,8 @@ import Receptions from './screens/Receptions';
 import NewMedicalRecode from './screens/Patients/NewMedicalRecode';
 import NotFound from './screens/NotFound';
 import Login from './screens/Login';
-import Register from './screens/Register';
+import Unauthorized from './screens/Unauthorized';
+//import Register from './screens/Register';
 
 function App() {
   Aos.init();
@@ -71,13 +72,14 @@ function App() {
           <Route path="/receptions" element={<Receptions />} />
           {/* others */}
           <Route path="/login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
+          {/* <Route path="/Register" element={<Register />} /> */}
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/campaigns" element={<Campaings />} />
           <Route path="/medicine" element={<Medicine />} />
           <Route path="/services" element={<Services />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </BrowserRouter>
     </>
