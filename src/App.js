@@ -38,6 +38,7 @@ import NewMedicalRecode from './screens/Patients/NewMedicalRecode';
 import NotFound from './screens/NotFound';
 import Login from './screens/Login';
 import Unauthorized from './screens/Unauthorized';
+import ProtectedRoute from './components/protectedRoute';
 //import Register from './screens/Register';
 
 function App() {
@@ -50,7 +51,7 @@ function App() {
       {/* Routes */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           {/* invoce */}
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/invoices/create" element={<CreateInvoice />} />
