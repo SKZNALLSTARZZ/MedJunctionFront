@@ -30,7 +30,7 @@ function Login() {
         const role = response.data.role;
         localStorage.setItem('token', token);
         localStorage.setItem('role', role) 
-        console.log(token);
+        console.log("Token : " + token + " Role : " + role);
         navigate('/');
       } else {
         setError(response.data.message || 'Login failed');
@@ -47,7 +47,7 @@ function Login() {
         <img
           src="/images/logo.png"
           alt="logo"
-          className="w-48 h-16 object-contain"
+          className="w-128 h-36 object-contain"
         />
         <div className="flex flex-col gap-4 w-full mb-6">
           <Input

@@ -7,7 +7,7 @@ function Unauthorized() {
   return (
     <div className="w-full h-screen flex-colo bg-dry text-center">
       <img
-        src="/images/404.svg"
+        src="/images/Unauthorized.png"
         alt="404"
         className="w-full max-h-96 object-contain"
       />

@@ -39,6 +39,7 @@ import NotFound from './screens/NotFound';
 import Login from './screens/Login';
 import Unauthorized from './screens/Unauthorized';
 import ProtectedRoute from './components/protectedRoute';
+import ProtectedLayout from './components/protectedLayout';
 //import Register from './screens/Register';
 
 function App() {
@@ -52,25 +53,76 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
           {/* invoce */}
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/invoices/create" element={<CreateInvoice />} />
-          <Route path="/invoices/edit/:id" element={<EditInvoice />} />
-          <Route path="/invoices/preview/:id" element={<PreviewInvoice />} />
+          <Route
+            path="/invoices"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Invoices />} />
+              <Route path="create" element={<CreateInvoice />} />
+              <Route path="edit/:id" element={<EditInvoice />} />
+              <Route path="preview/:id" element={<PreviewInvoice />} />
+          </Route>
+
           {/* payments */}
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/payments/edit/:id" element={<EditPayment />} />
-          <Route path="/payments/preview/:id" element={<PreviewPayment />} />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Payments />} />
+              <Route path="edit/:id" element={<EditPayment />} />
+              <Route path="preview/:id" element={<PreviewPayment />} />
+          </Route>
+
           {/* patient */}
-          <Route path="/patients" element={<Patients />} />
-          <Route path="/patients/preview/:id" element={<PatientProfile />} />
-          <Route path="/patients/create" element={<CreatePatient />} />
-          <Route path="/patients/visiting/:id" element={<NewMedicalRecode />} />
+          <Route
+            path="/patients"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Patients />} />
+              <Route path="create" element={<CreatePatient />} />
+              <Route path="visiting/:id" element={<NewMedicalRecode />} />
+              <Route path="preview/:id" element={<PatientProfile />} />
+          </Route>
+
           {/* doctors */}
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/doctors/preview/:id" element={<DoctorProfile />} />
+          <Route
+            path="/doctors"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Doctors />} />
+              <Route path="preview/:id" element={<DoctorProfile />} />
+          </Route>
+
           {/* reception */}
-          <Route path="/receptions" element={<Receptions />} />
+          <Route
+            path="/receptions"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Receptions />} />
+          </Route>
+
           {/* others */}
           <Route path="/login" element={<Login />} />
           {/* <Route path="/Register" element={<Register />} /> */}
