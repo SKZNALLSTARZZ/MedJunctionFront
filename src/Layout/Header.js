@@ -11,6 +11,9 @@ import MenuDrawer from '../components/Drawer/MenuDrawer';
 function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
 
+  const name = localStorage.getItem('name');
+  const image = localStorage.getItem('image');
+
   // toggle drawer
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
@@ -70,11 +73,11 @@ function Header() {
               <MenuSelect datas={DropDown1}>
                 <div className="flex gap-4 items-center p-4 rounded-lg">
                   <img
-                    src="/images/user1.png"
+                    src={`data:image/jpeg;base64,${image}`}
                     alt="user"
                     className="w-12 border border-border object-cover h-12 rounded-full"
                   />
-                  <p className="text-sm text-textGray font-medium">Dr. Daudi</p>
+                  <p className="text-sm text-textGray font-medium">{name}</p>
                 </div>
               </MenuSelect>
             </div>

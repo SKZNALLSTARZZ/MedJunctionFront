@@ -52,7 +52,7 @@ function App() {
       {/* Routes */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute allowedRoles={['admin', 'receptionist']}><Dashboard /></ProtectedRoute>} />
 
           {/* invoce */}
           <Route

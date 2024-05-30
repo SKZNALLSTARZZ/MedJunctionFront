@@ -113,8 +113,7 @@ function PersonalInfo({ titles}) {
     const form = document.getElementById('form') 
     const formData = new FormData(form);
     //formData.append('title', title?.name);
-    formData.append('sex', gender?.name);
-    formData.append('type', 'patient');
+    formData.append('gender', gender?.name);
     formData.append('blood_group', bloodgrp?.name);
     formData.append('birthdate', birthdate);
     formData.append('age', calculateAge(birthdate));

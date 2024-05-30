@@ -412,12 +412,12 @@ export function PatientTable({ data, functions, used }) {
             <td className={tdclasse}>
               <span
                 className={`py-1 px-4 ${
-                  item.sex === 'male'
+                  item.gender === 'Male'
                     ? 'bg-subMain text-subMain'
                     : 'bg-orange-500 text-orange-500'
                 } bg-opacity-10 text-xs rounded-xl`}
               >
-                {item.sex}
+                {item.gender}
               </span>
             </td>
             {!used && (

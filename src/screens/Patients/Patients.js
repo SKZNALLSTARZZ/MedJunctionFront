@@ -8,7 +8,7 @@ import { MdFilterList, MdOutlineCalendarMonth } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { Button, FromToDate, Select } from '../../components/Form';
 import { PatientTable } from '../../components/Tables';
-import axios from 'axios';
+import axiosInstance from '../../api/axios';
 
 function Patients() {
   const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
@@ -31,14 +31,13 @@ function Patients() {
     try {
       const token = localStorage.getItem('token');
       
-      // Make multiple GET requests concurrently
       const [patientsRes, countRes] = await Promise.all([
-        axios.get('http://127.0.0.1:8000/api/Patient/patients', {
+        axiosInstance.get('v1/patient', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }),
-        axios.get('http://127.0.0.1:8000/api/Patient/Count', {
+        axiosInstance.get('v1/Count', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +75,7 @@ function Patients() {
   const deletePatient = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://127.0.0.1:8000/api/Patient/patients/${id}`, {
+      await axiosInstance.delete(`v1/patient/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

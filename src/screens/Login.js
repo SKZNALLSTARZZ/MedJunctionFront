@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Checkbox, Input } from '../components/Form';
 import { BiLogInCircle } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; 
+import axiosInstance from '../api/axios';
 
 function Login() {
   const navigate = useNavigate();
@@ -19,7 +19,10 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      console.log(email);
+      console.log(password);
+      console.log(isChecked);
+      const response = await axiosInstance.post('/login', {
         email,
         password,
         isChecked,
@@ -28,8 +31,14 @@ function Login() {
       if (response.status === 200) {
         const token = response.data.token;
         const role = response.data.role;
+        const name = response.data.name;
+        const image = response.data.name;
+
         localStorage.setItem('token', token);
-        localStorage.setItem('role', role) 
+        localStorage.setItem('role', role) ;
+        localStorage.setItem('name', name) ;
+        localStorage.setItem('image', image) ;
+
         console.log("Token : " + token + " Role : " + role);
         navigate('/');
       } else {
