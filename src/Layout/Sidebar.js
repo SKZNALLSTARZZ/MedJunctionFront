@@ -3,7 +3,7 @@ import { MenuDatas } from '../components/Datas';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
-  // active link
+  const userRole = localStorage.getItem('role');
   const currentPath = (path) => {
     const currentPath =
       window.location.pathname.split('/')[1] === path.split('/')[1];
@@ -12,6 +12,10 @@ function Sidebar() {
     }
     return null;
   };
+
+  const filteredMenuItems = MenuDatas.filter((item) =>
+    item.roles.includes(userRole)
+  );
 
   return (
     <div className="bg-white xl:shadow-lg py-6 px-4 xl:h-screen w-full border-r border-border">
@@ -23,7 +27,7 @@ function Sidebar() {
         />
       </Link>
       <div className="flex-colo gap-2 mt-12">
-        {MenuDatas.map((item, index) => (
+        {filteredMenuItems.map((item, index) => (
           <Link
             to={item.path}
             key={index}

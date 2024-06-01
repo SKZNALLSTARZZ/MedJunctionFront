@@ -34,57 +34,68 @@ export const MenuDatas = [
     title: 'Dashboard',
     path: '/',
     icon: HiOutlineHome,
+    roles: ['admin', 'doctor', 'receptionist'],
   },
   {
     title: 'Patients',
     path: '/patients',
     icon: TbUsers,
+    roles: ['admin', 'doctor', 'receptionist'],
   },
   {
     title: 'Receptions',
     path: '/receptions',
     icon: HiOutlineUsers,
+    roles: ['admin'],
   },
   {
     title: 'Doctors',
     path: '/doctors',
     icon: RiUserHeartLine,
+    roles: ['admin'],
   },
 
   {
     title: 'Appointments',
     path: '/appointments',
     icon: FaRegCalendarAlt,
+    roles: ['admin', 'doctor', 'receptionist','patient','nurse'],
   },
   {
     title: 'Payments',
     path: '/payments',
     icon: MdListAlt,
+    roles: ['admin', 'receptionist'],
   },
   {
     title: 'Invoices',
     path: '/invoices',
     icon: TbFileInvoice,
+    roles: ['admin', 'receptionist','patient'],
   },
   {
     title: 'Services',
     path: '/services',
     icon: MdOutlineInventory2,
+    roles: ['admin', 'receptionist', 'patient'],
   },
   {
     title: 'Medicine',
     path: '/medicine',
     icon: RiMedicineBottleLine,
+    roles: ['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist'],
   },
   {
     title: 'Campaigns',
     path: '/campaigns',
     icon: MdOutlineCampaign,
+    roles: ['admin', 'receptionist'],
   },
   {
     title: 'Settings',
     path: '/settings',
     icon: AiOutlineSetting,
+    roles: ['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'pharmacist'],
   },
 ];
 export const memberData = [

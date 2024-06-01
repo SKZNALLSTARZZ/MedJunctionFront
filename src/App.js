@@ -53,12 +53,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<ProtectedRoute allowedRoles={['admin', 'receptionist']}><Dashboard /></ProtectedRoute>} />
-
           {/* invoce */}
           <Route
             path="/invoices"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin', 'receptionist', 'patient']}> 
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -73,7 +72,7 @@ function App() {
           <Route
             path="/payments"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin', 'receptionist']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -87,7 +86,7 @@ function App() {
           <Route
             path="/patients"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin', 'doctor', 'receptionist']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -102,7 +101,7 @@ function App() {
           <Route
             path="/doctors"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -115,7 +114,7 @@ function App() {
           <Route
             path="/receptions"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -126,11 +125,11 @@ function App() {
           {/* others */}
           <Route path="/login" element={<Login />} />
           {/* <Route path="/Register" element={<Register />} /> */}
-          <Route path="/appointments" element={<Appointments />} />
-          <Route path="/campaigns" element={<Campaings />} />
-          <Route path="/medicine" element={<Medicine />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/appointments" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'receptionist','patient','nurse']}><Appointments /></ProtectedRoute>} />
+          <Route path="/campaigns" element={<ProtectedRoute allowedRoles={['admin', 'receptionist']}><Campaings /></ProtectedRoute>} />
+          <Route path="/medicine" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist']}><Medicine /></ProtectedRoute>} />
+          <Route path="/services" element={<ProtectedRoute allowedRoles={['admin', 'receptionist', 'patient']}><Services /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'pharmacist']}><Settings /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
