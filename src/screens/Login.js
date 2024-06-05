@@ -3,6 +3,7 @@ import { Button, Checkbox, Input } from '../components/Form';
 import { BiLogInCircle } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axios';
+import { navigateBasedOnRole } from '../services/navigationService';
 
 function Login() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function Login() {
         localStorage.setItem('image', image) ;
 
         console.log("Token : " + token + " Role : " + role);
-        navigate('/');
+        navigateBasedOnRole(navigate, role);
       } else {
         setError(response.data.message || 'Login failed');
       }
