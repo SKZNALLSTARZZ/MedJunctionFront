@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../Layout';
 import { sortsDatas } from '../../components/Datas';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +8,9 @@ import { MdFilterList, MdOutlineCalendarMonth } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { Button, FromToDate, Select } from '../../components/Form';
 import { PatientTable } from '../../components/Tables';
+import Loader from '../../components/Notifications/Loader';
 import axiosInstance from '../../api/axios';
+import { getFetchPatientsCountFunction, getFetchPatientsFunction } from '../../services/authService';
 
 function Patients() {
   const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
@@ -20,6 +22,11 @@ function Patients() {
   const [startDate, endDate] = dateRange;
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(true);
+
+  const userRole = localStorage.getItem('role');
+  const fetchPatientsFunction = getFetchPatientsFunction(userRole);
+  const fetchPatientsCountFunction = getFetchPatientsCountFunction(userRole);
 
   useEffect(() => {
     fetchPatients();
@@ -30,40 +37,33 @@ function Patients() {
   const fetchPatients = async () => {
     try {
       const token = localStorage.getItem('token');
-      
+
       const [patientsRes, countRes] = await Promise.all([
-        axiosInstance.get('v1/patient', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        axiosInstance.get('v1/Count', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        fetchPatientsFunction(token),
+        fetchPatientsCountFunction(token)
       ]);
-      
-      // Handle the responses here
+
       setPatients(patientsRes.data);
-      setPatientsCount(countRes.data)
+      setPatientsCount(countRes.data);
+      setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err.message);
+      setLoading(false);
     }
   };
 
   const handleFilterButtonClick = () => {
     const filtered = patients.filter(patient => {
       const createdAt = new Date(patient.created_at);
-      return patient.name.toLowerCase().includes(query.toLowerCase()) && 
+      return patient.name.toLowerCase().includes(query.toLowerCase()) &&
         (!startDate || createdAt >= startDate) &&
         (!endDate || createdAt <= endDate) &&
-        (!gender.name || patient.sex.toLowerCase() === gender.name.toLowerCase()); 
+        (!gender.name || patient.sex.toLowerCase() === gender.name.toLowerCase());
     });
-    let sortedFiltered = [...filtered]; 
+    let sortedFiltered = [...filtered];
 
     if (status.name === "Newest Patients") {
-      
+
       sortedFiltered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     } else {
       sortedFiltered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
@@ -71,7 +71,7 @@ function Patients() {
 
     setFilteredPatients(sortedFiltered);
   };
-  
+
   const deletePatient = async (id) => {
     try {
       const token = localStorage.getItem('token');
@@ -118,15 +118,26 @@ function Patients() {
     navigate(`/patients/preview/${id}`);
   };
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {/* add button */}
-      <Link
-        to="/patients/create"
-        className="w-16 animate-bounce h-16 border border-border z-50 bg-subMain text-white rounded-full flex-colo fixed bottom-8 right-12 button-fb"
-      >
-        <BiPlus className="text-2xl" />
-      </Link>
+      {['admin', 'receptionist'].includes(userRole) && (
+        <Link
+          to="/patients/create"
+          className="w-16 animate-bounce h-16 border border-border z-50 bg-subMain text-white rounded-full flex-colo fixed bottom-8 right-12 button-fb"
+        >
+          <BiPlus className="text-2xl" />
+        </Link>
+      )}
       <h1 className="text-xl font-semibold">Patients</h1>
       {/* boxes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
@@ -143,8 +154,8 @@ function Patients() {
                 {box.title === 'Today Patients'
                   ? 'today'
                   : box.title === 'Monthly Patients'
-                  ? 'this month'
-                  : 'this year'}
+                    ? 'this month'
+                    : 'this year'}
               </p>
             </div>
             <div
@@ -172,26 +183,26 @@ function Patients() {
             onChange={(e) => setQuery(e.target.value)}
           />
           {/* sort  */}
-           <Select
-              selectedPerson={status}
-              setSelectedPerson={setStatus}
-              datas={sortsDatas.filterPatient}
-            >
-              <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
-                <p>{status?.name}</p>
-                <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
-            <Select
-              selectedPerson={gender}
-              setSelectedPerson={setGender}
-              datas={sortsDatas.genderFilter}
-            >
-              <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
-                <p>{gender?.name}</p>
-                <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
+          <Select
+            selectedPerson={status}
+            setSelectedPerson={setStatus}
+            datas={sortsDatas.filterPatient}
+          >
+            <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
+              <p>{status?.name}</p>
+              <BiChevronDown className="text-xl" />
+            </div>
+          </Select>
+          <Select
+            selectedPerson={gender}
+            setSelectedPerson={setGender}
+            datas={sortsDatas.genderFilter}
+          >
+            <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
+              <p>{gender?.name}</p>
+              <BiChevronDown className="text-xl" />
+            </div>
+          </Select>
           {/* date */}
           <FromToDate
             startDate={startDate}
@@ -213,6 +224,7 @@ function Patients() {
               preview: previewPatient,
               deletePatient: deletePatient,
             }}
+            userRole={userRole}
             used={false}
           />
         </div>

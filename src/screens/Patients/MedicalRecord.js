@@ -8,10 +8,17 @@ import { medicalRecodData } from '../../components/Datas';
 import MedicalRecodModal from '../../components/Modals/MedicalRecodModal';
 import { useNavigate } from 'react-router-dom';
 
-function MedicalRecord() {
+function MedicalRecord({ data }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [datas, setDatas] = React.useState({});
+  const userRole = localStorage.getItem('role');
+  const isUserAuthorized = userRole === 'admin' || userRole === 'receptionist';
   const navigate = useNavigate();
+
+  if (!data || data.length === 0) {
+    return <div>No consultations available.</div>;
+  }
+
   return (
     <>
       {
@@ -30,44 +37,60 @@ function MedicalRecord() {
       <div className="flex flex-col gap-6">
         <div className="flex-btn gap-4">
           <h1 className="text-sm font-medium sm:block hidden">
-            Medical Record
+            Visits :
           </h1>
           <div className="sm:w-1/4 w-full">
-            <Button
-              label="New Record"
-              Icon={BiPlus}
-              onClick={() => {
-                navigate(`/patients/visiting/2`);
-              }}
-            />
+            {['admin', 'receptionist'].includes(userRole) && (
+              <Button
+                label="New Record"
+                Icon={BiPlus}
+                onClick={() => {
+                  navigate(`/patients/visiting/2`);
+                }}
+              />
+            )}
           </div>
         </div>
-        {medicalRecodData.map((data) => (
+        {data.map((data, index) => (
           <div
-            key={data.id}
+            key={index}
             className="bg-dry items-start grid grid-cols-12 gap-4 rounded-xl border-[1px] border-border p-6"
           >
             <div className="col-span-12 md:col-span-2">
-              <p className="text-xs text-textGray font-medium">{data.date}</p>
+              <p className="text-xs text-textGray font-medium">{data.Date}</p>
             </div>
             <div className="col-span-12 md:col-span-6 flex flex-col gap-2">
-              {data?.data?.map((item, index) => (
-                <p key={item.id} className="text-xs text-main font-light">
-                  <span className="font-medium">{item?.title}:</span>{' '}
-                  {
-                    // if value character is more than 40, show only 40 characters
-                    item?.value?.length > 40
-                      ? `${item?.value?.slice(0, 40)}...`
-                      : item?.value
-                  }
+              {/* Displaying complaints */}
+              <p className="text-xs text-main font-light">
+                <span className="font-medium">Complaints:</span>{' '}
+                {data.Complains}
+              </p>
+
+              {/* Displaying diagnosis */}
+              <p className="text-xs text-main font-light">
+                <span className="font-medium">Diagnosis:</span>{' '}
+                {data.Diagnosis}
+              </p>
+
+              {/* Displaying treatment */}
+              <p className="text-xs text-main font-light">
+                <span className="font-medium">Treatment:</span>{' '}
+                {data.Treatments}
+              </p>
+
+              {/* Displaying prescriptions */}
+              {data.Prescription.length > 0 && (
+                <p className="text-xs text-main font-light">
+                  <span className="font-medium">Prescription:</span>{' '}
+                  {data.Prescription.map(prescription => prescription.name).join(', ')}
                 </p>
-              ))}
+              )}
             </div>
             {/* price */}
             <div className="col-span-12 md:col-span-2">
               <p className="text-xs text-subMain font-semibold">
-                <span className="font-light text-main">(Tsh)</span>{' '}
-                {data?.amount}
+                <span className="font-light text-main">($)</span>{' '}
+                {data?.Price}
               </p>
             </div>
             {/* actions */}
@@ -81,14 +104,15 @@ function MedicalRecord() {
               >
                 <FiEye />
               </button>
-              <button
-                onClick={() => {
-                  toast.error('This feature is not available yet');
-                }}
-                className="text-sm flex-colo bg-white text-red-600 border border-border rounded-md w-2/4 md:w-10 h-10"
-              >
-                <RiDeleteBin6Line />
-              </button>
+              {isUserAuthorized && (
+                <button
+                  onClick={() => {
+                    toast.error('This feature is not available yet');
+                  }}
+                  className="text-sm flex-colo bg-white text-red-600 border border-border rounded-md w-2/4 md:w-10 h-10"
+                >
+                  <RiDeleteBin6Line />
+                </button>)}
             </div>
           </div>
         ))}

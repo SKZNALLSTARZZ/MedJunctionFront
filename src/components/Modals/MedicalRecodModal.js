@@ -8,26 +8,33 @@ import { useNavigate } from 'react-router-dom';
 
 function MedicalRecodModal({ closeModal, isOpen, datas }) {
   const navigate = useNavigate();
+  const userRole = localStorage.getItem('role');
+  const isUserAuthorized = userRole === 'admin' || userRole === 'receptionist';
+  const vitalSignsArray = datas?.Vital_signs ? Object.entries(datas.Vital_signs) : [];
+  const picturesArray = datas?.Pictures ? JSON.parse(datas.Pictures) : [];
+  const specificKeys = ["Complains", "Diagnosis", "Treatments"];
   return (
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title="12 May 2021"
+      title={datas.Date}
       width={'max-w-4xl'}
     >
       <div className="flex-colo gap-6">
-        {datas?.data?.slice(0, 3).map((data) => (
-          <div key={data.id} className="grid grid-cols-12 gap-4 w-full">
-            <div className="col-span-12 md:col-span-3">
-              <p className="text-sm font-medium">{data.title}:</p>
+        {Object.entries(datas)
+          .filter(([key]) => specificKeys.includes(key))
+          .map(([key, value]) => (
+            <div key={key} className="grid grid-cols-12 gap-4 w-full">
+              <div className="col-span-12 md:col-span-3">
+                <p className="text-sm font-medium">{key}:</p>
+              </div>
+              <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6">
+                <p className="text-xs text-main font-light leading-5">
+                  {value}
+                </p>
+              </div>
             </div>
-            <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6">
-              <p className="text-xs text-main font-light leading-5">
-                {data.value}
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
         {/* visual sign */}
         <div className="grid grid-cols-12 gap-4 w-full">
           <div className="col-span-12 md:col-span-3">
@@ -35,10 +42,9 @@ function MedicalRecodModal({ closeModal, isOpen, datas }) {
           </div>
           <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6">
             <p className="text-xs text-main font-light leading-5">
-              {datas?.vitalSigns?.map((item) => (
-                // separate each item with comma
-                <span key={item} className="mr-1">
-                  {item},
+              {vitalSignsArray.map(([key, value]) => (
+                <span key={key} className="mr-1">
+                  {key}: {value},
                 </span>
               ))}
             </p>
@@ -51,7 +57,7 @@ function MedicalRecodModal({ closeModal, isOpen, datas }) {
           </div>
           <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl overflow-hidden p-4">
             <MedicineDosageTable
-              data={medicineData?.slice(0, 3)}
+              data={datas.Prescription?.slice(0, 3)}
               functions={{}}
               button={false}
             />
@@ -64,10 +70,9 @@ function MedicalRecodModal({ closeModal, isOpen, datas }) {
           </div>
           <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6 xs:grid-cols-2 md:grid-cols-4 grid gap-4">
             {
-              // show attachments
-              datas?.attachments?.map((item) => (
+              picturesArray.map((item, index) => (
                 <img
-                  key={item}
+                  key={index}
                   src={item}
                   alt="attachment"
                   className="w-full md:h-32 object-cover rounded-md"
@@ -78,20 +83,21 @@ function MedicalRecodModal({ closeModal, isOpen, datas }) {
         </div>
 
         {/* view Invoice */}
-        <div className="flex justify-end items-center w-full">
-          <div className="md:w-3/4 w-full">
-            <Button
-              label="View Invoice"
-              Icon={FiEye}
-              onClick={() => {
-                closeModal();
-                navigate(`/invoices/preview/198772`);
-              }}
-            />
-          </div>
-        </div>
+        {isUserAuthorized && (
+          <div className="flex justify-end items-center w-full">
+            <div className="md:w-3/4 w-full">
+              <Button
+                label="View Invoice"
+                Icon={FiEye}
+                onClick={() => {
+                  closeModal();
+                  navigate(`/invoices/preview/198772`);
+                }}
+              />
+            </div>
+          </div>)}
       </div>
-    </Modal>
+    </Modal >
   );
 }
 

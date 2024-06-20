@@ -34,7 +34,7 @@ export const MenuDatas = [
     title: 'Dashboard',
     path: '/',
     icon: HiOutlineHome,
-    roles: ['admin', 'doctor', 'receptionist'],
+    roles: ['admin', 'receptionist'],
   },
   {
     title: 'Patients',
@@ -1074,21 +1074,11 @@ export const patientTab = [
   },
   {
     id: 5,
-    title: 'Images',
-    icon: RiImageLine,
-  },
-  {
-    id: 6,
-    title: 'Dental Chart',
-    icon: RiStethoscopeLine,
-  },
-  {
-    id: 7,
     title: 'Patient Information',
     icon: RiUserLine,
   },
   {
-    id: 8,
+    id: 6,
     title: 'Health Information',
     icon: RiHeartLine,
   },

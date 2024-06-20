@@ -328,38 +328,30 @@ export function ServiceTable({ data, onEdit }) {
 }
 
 // patient table
-export function PatientTable({ data, functions, used }) {
+export function PatientTable({ data, functions, used, userRole }) {
   const { deletePatient, preview } = functions;
-  const DropDown1 = !used
-    ? [
-        {
-          title: 'View',
-          icon: FiEye,
-          onClick: async (data) => {
-            functions.preview(data.id);
-          },
+  const DropDown1 = [
+    {
+      title: 'View',
+      icon: FiEye,
+      onClick: async (data) => {
+        functions.preview(data.id);
+      },
+    },
+    ...(userRole !== 'doctor' ? [
+      {
+        title: 'Delete',
+        icon: RiDeleteBin6Line,
+        onClick: async (data) => {
+          try {
+            await deletePatient(data.id);
+          } catch (error) {
+            console.error('Error deleting patient:', error);
+          }
         },
-        {
-          title: 'Delete',
-          icon: RiDeleteBin6Line,
-          onClick: async (data) => {
-            try {
-              await deletePatient(data.id); 
-            } catch (error) {
-              console.error('Error deleting patient:', error);
-            }
-          },
-        },
-      ]
-    : [
-        {
-          title: 'View',
-          icon: FiEye,
-          onClick: async (data) => {
-            functions.preview(data.id);
-          },
-        },
-      ];
+      },
+    ] : []),
+  ];
   const thclasse = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
   const tdclasse = 'text-start text-xs py-4 px-2 whitespace-nowrap';
   return (
@@ -386,7 +378,7 @@ export function PatientTable({ data, functions, used }) {
             key={item.id}
             className="border-b border-border hover:bg-greyed transitions"
           >
-            <td className={tdclasse}>{index + 1}</td>
+            <td className={tdclasse}>{item.id}</td>
             <td className={tdclasse}>
               <div className="flex gap-4 items-center">
                 {!used && (
@@ -412,7 +404,7 @@ export function PatientTable({ data, functions, used }) {
             <td className={tdclasse}>
               <span
                 className={`py-1 px-4 ${
-                  item.gender === 'Male'
+                  item.gender === 'male'
                     ? 'bg-subMain text-subMain'
                     : 'bg-orange-500 text-orange-500'
                 } bg-opacity-10 text-xs rounded-xl`}
@@ -761,7 +753,7 @@ export function MedicineDosageTable({ data, functions, button }) {
             <span className="text-xs font-light ml-1">(Tsh)</span>
           </th>
           <th className={thclasse}>Dosage</th>
-          <th className={thclasse}>Instraction</th>
+          <th className={thclasse}>Instruction</th>
           <th className={thclasse}>Quantity</th>
           <th className={thclasse}>
             Amout
@@ -778,10 +770,10 @@ export function MedicineDosageTable({ data, functions, button }) {
           >
             <td className={tdclasse}>{item.name}</td>
             <td className={tdclasse}>{item.price}</td>
-            <td className={tdclasse}>{item.id} - M/A/E</td>
-            <td className={tdclasse}>{item.instraction}</td>
-            <td className={tdclasse}>{item.id}</td>
-            <td className={tdclasse}>{item.price * item.id}</td>
+            <td className={tdclasse}>{item.dosage} - M/A/E</td>
+            <td className={tdclasse}>{null}</td>
+            <td className={tdclasse}>{item.quantity}</td>
+            <td className={tdclasse}>{item.amount}</td>
             {button && (
               <td className={tdclasse}>
                 <button

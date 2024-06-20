@@ -1,63 +1,62 @@
 import axios from '../api/axios';
 
-export const login = async (email, password, remember) => {
-    try {
-        const response = await axios.post('/login', { email, password, remember });
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
+const fetchPatientConsultations = async (id, token) => {
+    return axios.get(`v1/patientconsultations/${id}`, {
+        headers : {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchDoctorPatients = async (token) => {
+    return axios.get('v1/consulted-patients', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
+
+const fecthDoctorPatientsCount = async (token) => {
+    return axios.get('v1/consulted-patient-counts', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchPatients = async (token) => {
+    return axios.get('v1/patient', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+
+const getFetchPatientsFunction = (role) => {
+    switch (role) {
+        case 'doctor':
+            return fetchDoctorPatients;
+        case 'admin':
+            return fetchPatients;
+        case 'receptionist':
+            return fetchPatients;
+        default:
+            throw new Error('Role not recognized');
     }
 };
 
-export const logout = async () => {
-    try {
-        await axios.post('/logout');
-    } catch (error) {
-        throw error.response.data;
+const getFetchPatientsCountFunction = (role) => {
+    switch (role) {
+        case 'doctor':
+            return fecthDoctorPatientsCount;
+        case 'admin':
+            return fetchPatients;
+        case 'receptionist':
+            return fetchPatients;
+        default:
+            throw new Error('Role not recognized');
     }
 };
 
-export const getPatientData = async () => {
-    try {
-        const response = await axios.get('/patient');
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
-};
-
-export const getDoctorData = async () => {
-    try {
-        const response = await axios.get('/doctor');
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
-};
-
-export const getPharmacistData = async () => {
-    try {
-        const response = await axios.get('/pharmacist');
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
-};
-
-export const getReceptionistData = async () => {
-    try {
-        const response = await axios.get('/receptionist');
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
-};
-
-export const getAdminData = async () => {
-    try {
-        const response = await axios.get('/admin');
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
-};
+export { getFetchPatientsFunction, getFetchPatientsCountFunction, fetchPatientConsultations};

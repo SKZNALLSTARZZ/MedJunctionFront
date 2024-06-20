@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import axiosInstance from '../../api/axios';
 import Layout from '../../Layout';
 import { patientTab } from '../../components/Datas';
 import { Link } from 'react-router-dom';
@@ -10,40 +10,62 @@ import AppointmentsUsed from '../../components/UsedComp/AppointmentsUsed';
 import InvoiceUsed from '../../components/UsedComp/InvoiceUsed';
 import PaymentsUsed from '../../components/UsedComp/PaymentUsed';
 import PersonalInfo from '../../components/UsedComp/PersonalInfo';
-import PatientImages from './PatientImages';
 import HealthInfomation from './HealthInfomation';
-import DentalChart from './DentalChart';
+import Loader from '../../components/Notifications/Loader';
+import { fetchPatientConsultations} from '../../services/authService';
 
 function PatientProfile() {
   const [activeTab, setActiveTab] = React.useState(1);
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [patient, setPatient] = React.useState([]);
   const [patientEmail, setPatientEmail] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const [consultation, setConsultation] = React.useState([]);
+  const [consultationLoading, setConsultationLoading] = React.useState(true);
+
+  const token = localStorage.getItem('token');
+
+  const fetchPatientVisits = async () => {
+    try {
+      const response = await fetchPatientConsultations(id, token);
+      setConsultation(response.data.data);
+      setConsultationLoading(false);
+      //console.log(response);
+    }
+    catch (err) {
+      console.error('Error fetching data:', err.message);
+    }finally {
+      setConsultationLoading(false);
+    }
+  };
 
   const fetchPatientData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://127.0.0.1:8000/api/Patient/patients/${id}`, {
+      const response = await axiosInstance.get(`v1/patient/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setPatient(response.data[0]);
-      setPatientEmail(response.data[0].user.email);
+      setPatient(response.data);
+      setPatientEmail(response.data.user.email);
+      setLoading(false);
+      //console.log(response);
 
     } catch (error) {
       console.error('Error fetching patient data:', error);
+      setLoading(false);
     }
   };
 
   React.useEffect(() => {
     fetchPatientData();
+    fetchPatientVisits();
   }, []);
 
   const tabPanel = () => {
     switch (activeTab) {
       case 1:
-        return <MedicalRecord />;
+        return <MedicalRecord data={consultation}/>;
       case 2:
         return <AppointmentsUsed doctor={false} />;
       case 3:
@@ -51,20 +73,24 @@ function PatientProfile() {
       case 4:
         return <PaymentsUsed doctor={false} />;
       case 5:
-        return <PatientImages />;
-      case 6:
-        return <DentalChart />;
-      case 7:
         return <PersonalInfo titles={false} />;
-      case 8:
+      case 6:
         return <HealthInfomation />;
       default:
         return;
     }
   };
 
-
- return (
+  if (loading || consultationLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
+  return (
     <Layout>
       <div className="flex items-center gap-4">
         <Link
@@ -83,11 +109,11 @@ function PatientProfile() {
           data-aos-offset="200"
           className="col-span-12 flex-colo gap-6 lg:col-span-4 bg-white rounded-xl border-[1px] border-border p-6 lg:sticky top-28"
         >
-              <img
-                src={`data:image/jpeg;base64,${patient.img_data}`}
-                alt="Patient Image"
-                className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
-              />
+          <img
+            src={`data:image/jpeg;base64,${patient.img_data}`}
+            alt="Patient Image"
+            className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
+          />
           <div className="gap-2 flex-colo">
             <h2 className="text-sm font-semibold">{patient.name}</h2>
             <p className="text-xs text-textGray">{patientEmail}</p>
@@ -100,11 +126,10 @@ function PatientProfile() {
                 onClick={() => setActiveTab(tab.id)}
                 key={index}
                 className={`
-                ${
-                  activeTab === tab.id
+                ${activeTab === tab.id
                     ? 'bg-text text-subMain'
                     : 'bg-dry text-main hover:bg-text hover:text-subMain'
-                }
+                  }
                 text-xs gap-4 flex items-center w-full p-4 rounded`}
               >
                 <tab.icon className="text-lg" /> {tab.title}
@@ -125,6 +150,6 @@ function PatientProfile() {
       </div>
     </Layout>
   );
-} 
+}
 
 export default PatientProfile;
