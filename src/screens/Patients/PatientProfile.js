@@ -30,7 +30,6 @@ function PatientProfile() {
       const response = await fetchPatientConsultations(id, token);
       setConsultation(response.data.data);
       setConsultationLoading(false);
-      //console.log(response);
     }
     catch (err) {
       console.error('Error fetching data:', err.message);
@@ -49,7 +48,6 @@ function PatientProfile() {
       setPatient(response.data);
       setPatientEmail(response.data.user.email);
       setLoading(false);
-      //console.log(response);
 
     } catch (error) {
       console.error('Error fetching patient data:', error);
@@ -67,7 +65,7 @@ function PatientProfile() {
       case 1:
         return <MedicalRecord data={consultation}/>;
       case 2:
-        return <AppointmentsUsed doctor={false} />;
+        return <AppointmentsUsed doctor={true} />;
       case 3:
         return <InvoiceUsed />;
       case 4:

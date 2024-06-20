@@ -12,7 +12,7 @@ const tdclass = 'text-start text-sm py-4 px-2 whitespace-nowrap';
 
 const formatDate = (timestamp) => {
   const dateObject = new Date(timestamp);
-  const dateFormatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'});
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
   return dateFormatter.format(dateObject);
 };
 
@@ -83,13 +83,12 @@ export function Transactiontable({ data, action, functions }) {
             <td className={tdclass}>{item.date}</td>
             <td className={tdclass}>
               <span
-                className={`py-1 px-4 ${
-                  item.status === 'Paid'
+                className={`py-1 px-4 ${item.status === 'Paid'
                     ? 'bg-subMain text-subMain'
                     : item.status === 'Pending'
-                    ? 'bg-orange-500 text-orange-500'
-                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
-                } bg-opacity-10 text-xs rounded-xl`}
+                      ? 'bg-orange-500 text-orange-500'
+                      : item.status === 'Cancel' && 'bg-red-600 text-red-600'
+                  } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.status}
               </span>
@@ -237,11 +236,10 @@ export function MedicineTable({ data, onEdit }) {
             <td className={`${tdclass} font-semibold`}>{item?.price}</td>
             <td className={tdclass}>
               <span
-                className={`text-xs font-medium ${
-                  item?.status === 'Out of stock'
+                className={`text-xs font-medium ${item?.status === 'Out of stock'
                     ? 'text-red-600'
                     : 'text-green-600'
-                }`}
+                  }`}
               >
                 {item?.status}
               </span>
@@ -306,9 +304,8 @@ export function ServiceTable({ data, onEdit }) {
             <td className={`${tdclass} font-semibold`}>{item?.price}</td>
             <td className={tdclass}>
               <span
-                className={`text-xs font-medium ${
-                  !item?.status ? 'text-red-600' : 'text-green-600'
-                }`}
+                className={`text-xs font-medium ${!item?.status ? 'text-red-600' : 'text-green-600'
+                  }`}
               >
                 {!item?.status ? 'Disabled' : 'Enabled'}
               </span>
@@ -384,11 +381,11 @@ export function PatientTable({ data, functions, used, userRole }) {
                 {!used && (
                   <span className="w-12">
                     {item.img_data && (
-                        <img
-                            src={`data:image/jpeg;base64,${item.img_data}`}
-                            alt="Patient Image"
-                            className="w-full h-12 rounded-full object-cover border border-border"
-                        />
+                      <img
+                        src={`data:image/jpeg;base64,${item.img_data}`}
+                        alt="Patient Image"
+                        className="w-full h-12 rounded-full object-cover border border-border"
+                      />
                     )}
                   </span>
                 )}
@@ -403,11 +400,10 @@ export function PatientTable({ data, functions, used, userRole }) {
 
             <td className={tdclasse}>
               <span
-                className={`py-1 px-4 ${
-                  item.gender === 'male'
+                className={`py-1 px-4 ${item.gender === 'male'
                     ? 'bg-subMain text-subMain'
                     : 'bg-orange-500 text-orange-500'
-                } bg-opacity-10 text-xs rounded-xl`}
+                  } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.gender}
               </span>
@@ -455,17 +451,17 @@ export function DoctorsTable({ data, functions, doctor }) {
             Authorization: `Bearer ${token}`,
           },
         })
-        .then(response => {
-          if (response.status === 200) {
-            toast.success('Item deleted successfully');
-          } else {
+          .then(response => {
+            if (response.status === 200) {
+              toast.success('Item deleted successfully');
+            } else {
+              toast.error('Failed to delete item');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting item:', error);
             toast.error('Failed to delete item');
-          }
-        })
-        .catch(error => {
-          console.error('Error deleting item:', error);
-          toast.error('Failed to delete item');
-        });
+          });
       },
     }
   ];
@@ -491,7 +487,7 @@ export function DoctorsTable({ data, functions, doctor }) {
             <td className={tdclass}>{index + 1}</td>
             <td className={tdclass}>
               <div className="flex gap-4 items-center">
-                
+
                 <h4 className="text-sm font-medium">{item.name}</h4>
               </div>
             </td>
@@ -536,31 +532,30 @@ export function AppointmentTable({ data, functions, doctor }) {
             className="border-b border-border hover:bg-greyed transitions"
           >
             <td className={tdclass}>
-              <p className="text-xs">{item.date}</p>
+              <p className="text-xs">{item.Date}</p>
             </td>
-            <td className={tdclass}>
-              <h4 className="text-xs font-medium">
-                {doctor ? item.user.title : item.doctor.title}
-              </h4>
-              <p className="text-xs mt-1 text-textGray">
-                {doctor ? item.user.phone : item.doctor.phone}
-              </p>
-            </td>
+              <td className={tdclass}>
+                <h4 className="text-xs font-medium">
+                  {doctor ? item.Patient.name : item.Doctor.title}
+                </h4>
+                <p className="text-xs mt-1 text-textGray">
+                  {doctor ? item.Patient.phone : item.Doctor.phone}
+                </p>
+              </td>
             <td className={tdclass}>
               <span
-                className={`py-1  px-4 ${
-                  item.status === 'Approved'
+                className={`py-1  px-4 ${item.Status === 'approved'
                     ? 'bg-subMain text-subMain'
-                    : item.status === 'Pending'
-                    ? 'bg-orange-500 text-orange-500'
-                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
-                } bg-opacity-10 text-xs rounded-xl`}
+                    : item.Status === 'pending'
+                      ? 'bg-orange-500 text-orange-500'
+                      : item.Status === 'cancelled' && 'bg-red-600 text-red-600'
+                  } bg-opacity-10 text-xs rounded-xl`}
               >
-                {item.status}
+                {item.Status}
               </span>
             </td>
             <td className={tdclass}>
-              <p className="text-xs">{`${item.from} - ${item.to}`}</p>
+              <p className="text-xs">{`${item.Start_time} - ${item.End_time}`}</p>
             </td>
 
             <td className={tdclass}>
@@ -611,13 +606,12 @@ export function PaymentTable({ data, functions, doctor }) {
             </td>
             <td className={tdclass}>
               <span
-                className={`py-1  px-4 ${
-                  item.status === 'Paid'
+                className={`py-1  px-4 ${item.status === 'Paid'
                     ? 'bg-subMain text-subMain'
                     : item.status === 'Pending'
-                    ? 'bg-orange-500 text-orange-500'
-                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
-                } bg-opacity-10 text-xs rounded-xl`}
+                      ? 'bg-orange-500 text-orange-500'
+                      : item.status === 'Cancel' && 'bg-red-600 text-red-600'
+                  } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.status}
               </span>
