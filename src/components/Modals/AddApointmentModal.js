@@ -14,8 +14,8 @@ import { memberData, servicesData, sortsDatas } from '../Datas';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import PatientMedicineServiceModal from './PatientMedicineServiceModal';
+import { parse } from 'date-fns';
 
-// edit member data
 const doctorsData = memberData.map((item) => {
   return {
     id: item.id,
@@ -23,13 +23,15 @@ const doctorsData = memberData.map((item) => {
   };
 });
 
-function AddAppointmentModal({ closeModal, isOpen, datas }) {
+function AddAppointmentModal({ closeModal, isOpen, datas, mode }) {
   const [services, setServices] = useState(servicesData[0]);
   const [startDate, setStartDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
-  const [status, setStatus] = useState(sortsDatas.status[0]);
-  const [doctors, setDoctors] = useState(doctorsData[0]);
+  const [status, setStatus] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
   const [shares, setShares] = useState({
     email: false,
     sms: false,
@@ -37,26 +39,34 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
   });
   const [open, setOpen] = useState(false);
 
-  // on change share
   const onChangeShare = (e) => {
     setShares({ ...shares, [e.target.name]: e.target.checked });
   };
 
-  // set data
+  //dummy date only used to format time values
+  const today = new Date().toISOString().slice(0, 10);
+
   useEffect(() => {
-    if (datas?.title) {
-      setServices(datas?.service);
-      setStartTime(datas?.start);
-      setEndTime(datas?.end);
-      setShares(datas?.shareData);
+    if (datas[0]?.Patient.name) {
+      //setServices(datas?.service);
+      setPatients(datas[0]?.Patient.name)
+      setStartDate(parse(datas[0]?.Date, 'MMM d, yyyy', new Date()));
+      setStartTime(new Date(`${today}T${datas[0].Start_time}`));
+      setEndTime(new Date(`${today}T${datas[0].End_time}`));
+      setStatus(datas[0]?.Status);
+      setDoctors(datas[0]?.Doctor.name);
+      setDescriptions(datas[0]?.Description);
+      //setShares(datas?.shareData);
     }
   }, [datas]);
+
+  const isPreview = mode === 'preview';
 
   return (
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title={datas?.title ? 'Edit Appointment' : 'New Appointment'}
+      title={isPreview ? 'Appointment Details :' : 'New Appointment'}
       width={'max-w-3xl'}
     >
       {open && (
@@ -73,18 +83,21 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
               label="Patient Name"
               color={true}
               placeholder={
-                datas?.title
-                  ? datas.title
+                patients
+                  ? patients
                   : 'Select Patient and patient name will appear here'
               }
+              readOnly={isPreview}
             />
           </div>
-          <button
-            onClick={() => setOpen(!open)}
-            className="text-subMain flex-rows border border-dashed border-subMain text-sm py-3.5 sm:mt-6 sm:col-span-2 rounded"
-          >
-            <BiPlus /> Add
-          </button>
+          {!isPreview && (
+            <button
+              onClick={() => setOpen(!open)}
+              className="text-subMain flex-rows border border-dashed border-subMain text-sm py-3.5 sm:mt-6 sm:col-span-2 rounded"
+            >
+              <BiPlus /> Add
+            </button>
+          )}
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4 w-full">
@@ -94,17 +107,18 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
               selectedPerson={services}
               setSelectedPerson={setServices}
               datas={servicesData}
+              disabled={isPreview}
             >
               <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
                 {services.name} <BiChevronDown className="text-xl" />
               </div>
             </Select>
           </div>
-          {/* date */}
           <DatePickerComp
             label="Date of visit"
             startDate={startDate}
             onChange={(date) => setStartDate(date)}
+            disabled={isPreview}
           />
         </div>
 
@@ -113,25 +127,27 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
             label="Start time"
             startDate={startTime}
             onChange={(date) => setStartTime(date)}
+            disabled={isPreview}
           />
           <TimePickerComp
             label="End time"
             startDate={endTime}
             onChange={(date) => setEndTime(date)}
+            disabled={isPreview}
           />
         </div>
 
-        {/* status && doctor */}
         <div className="grid sm:grid-cols-2 gap-4 w-full">
           <div className="flex w-full flex-col gap-3">
             <p className="text-black text-sm">Doctor</p>
             <Select
               selectedPerson={doctors}
               setSelectedPerson={setDoctors}
-              datas={doctorsData}
+              datas={doctors}
+              disabled={isPreview}
             >
               <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {doctors.name} <BiChevronDown className="text-xl" />
+                {doctors} <BiChevronDown className="text-xl" />
               </div>
             </Select>
           </div>
@@ -140,52 +156,56 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
             <Select
               selectedPerson={status}
               setSelectedPerson={setStatus}
-              datas={sortsDatas.status}
+              datas={status}
+              disabled={isPreview}
             >
               <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {status.name} <BiChevronDown className="text-xl" />
+                {status} <BiChevronDown className="text-xl" />
               </div>
             </Select>
           </div>
         </div>
 
-        {/* des */}
         <Textarea
           label="Description"
           placeholder={
-            datas?.message
-              ? datas.message
-              : 'She will be coming for a checkup.....'
+            descriptions
+              ? descriptions
+              : 'No descriptions given.'
           }
           color={true}
           rows={5}
+          readOnly={isPreview}
         />
-
-        {/* share */}
-        <div className="flex-col flex gap-8 w-full">
-          <p className="text-black text-sm">Share with patient via</p>
-          <div className="flex flex-wrap sm:flex-nowrap gap-4">
-            <Checkbox
-              name="email"
-              checked={shares.email}
-              onChange={onChangeShare}
-              label="Email"
-            />
-            <Checkbox
-              name="sms"
-              checked={shares.sms}
-              onChange={onChangeShare}
-              label="SMS"
-            />
-            <Checkbox
-              checked={shares.whatsapp}
-              name="whatsapp"
-              onChange={onChangeShare}
-              label="WhatsApp"
-            />
+        {!isPreview && (
+          <div className="flex-col flex gap-8 w-full">
+            <p className="text-black text-sm">Share with patient via</p>
+            <div className="flex flex-wrap sm:flex-nowrap gap-4">
+              <Checkbox
+                name="email"
+                checked={shares.email}
+                onChange={(e) => setShares({ ...shares, email: e.target.checked })}
+                label="Email"
+                disabled={isPreview}
+              />
+              <Checkbox
+                name="sms"
+                checked={shares.sms}
+                onChange={(e) => setShares({ ...shares, sms: e.target.checked })}
+                label="SMS"
+                disabled={isPreview}
+              />
+              <Checkbox
+                name="whatsapp"
+                checked={shares.whatsapp}
+                onChange={(e) => setShares({ ...shares, whatsapp: e.target.checked })}
+                label="WhatsApp"
+                disabled={isPreview}
+              />
+            </div>
           </div>
-        </div>
-        {/* buttones */}
+        )}
+
         <div className="grid sm:grid-cols-2 gap-4 w-full">
           <button
             onClick={closeModal}
@@ -193,13 +213,15 @@ function AddAppointmentModal({ closeModal, isOpen, datas }) {
           >
             {datas?.title ? 'Discard' : 'Cancel'}
           </button>
-          <Button
-            label="Save"
-            Icon={HiOutlineCheckCircle}
-            onClick={() => {
-              toast.error('This feature is not available yet');
-            }}
-          />
+          {!isPreview && (
+            <Button
+              label="Save"
+              Icon={HiOutlineCheckCircle}
+              onClick={() => {
+                toast.error('This feature is not available yet');
+              }}
+            />
+          )}
         </div>
       </div>
     </Modal>

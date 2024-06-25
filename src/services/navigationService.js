@@ -7,10 +7,10 @@ export const navigateBasedOnRole = (navigate, role) => {
         navigate('/medicine');
         break;
       case 'receptionist':
-        navigate('/');
+        navigate('/dashboard');
         break;
       case 'admin':
-        navigate('/');
+        navigate('/dashboard');
         break;
       case 'doctor':
         navigate('/patients');
@@ -19,6 +19,6 @@ export const navigateBasedOnRole = (navigate, role) => {
         navigate('/settings');
         break;
       default:
-        navigate('/');
+        navigate('/dashboard');
     }
   };

@@ -12,7 +12,7 @@ import PaymentsUsed from '../../components/UsedComp/PaymentUsed';
 import PersonalInfo from '../../components/UsedComp/PersonalInfo';
 import HealthInfomation from './HealthInfomation';
 import Loader from '../../components/Notifications/Loader';
-import { fetchPatientConsultations} from '../../services/authService';
+import { fetchPatientConsultations } from '../../services/authService';
 
 function PatientProfile() {
   const [activeTab, setActiveTab] = React.useState(1);
@@ -24,6 +24,20 @@ function PatientProfile() {
   const [consultationLoading, setConsultationLoading] = React.useState(true);
 
   const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('role');
+  const allAccessRoles = ['patient', 'receptionist', 'admin'];
+
+  const accessibleTabs = {
+    doctor: [1, 2, 5, 6],
+    nurse: [1, 2, 5, 6],
+    patient: [1, 2, 3, 4, 5, 6],
+    receptionist: [1, 2, 3, 4, 5, 6],
+    admin: [1, 2, 3, 4, 5, 6],
+  };
+
+  const userHasAccessToTab = (role, tabId) => {
+    return accessibleTabs[role]?.includes(tabId);
+  };
 
   const fetchPatientVisits = async () => {
     try {
@@ -33,7 +47,7 @@ function PatientProfile() {
     }
     catch (err) {
       console.error('Error fetching data:', err.message);
-    }finally {
+    } finally {
       setConsultationLoading(false);
     }
   };
@@ -63,19 +77,25 @@ function PatientProfile() {
   const tabPanel = () => {
     switch (activeTab) {
       case 1:
-        return <MedicalRecord data={consultation}/>;
+        if (userHasAccessToTab(userRole, 1)) return <MedicalRecord data={consultation} />;
+        break;
       case 2:
-        return <AppointmentsUsed doctor={true} />;
+        if (userHasAccessToTab(userRole, 2)) return <AppointmentsUsed doctor={true} patientId={id} />;
+        break;
       case 3:
-        return <InvoiceUsed />;
+        if (userHasAccessToTab(userRole, 3)) return <InvoiceUsed />;
+        break;
       case 4:
-        return <PaymentsUsed doctor={false} />;
+        if (userHasAccessToTab(userRole, 4)) return <PaymentsUsed doctor={false} />;
+        break;
       case 5:
-        return <PersonalInfo titles={false} />;
+        if (userHasAccessToTab(userRole, 5)) return <PersonalInfo titles={false} mode="preview" data={patient}/>;
+        break;
       case 6:
-        return <HealthInfomation />;
+        if (userHasAccessToTab(userRole, 6)) return <HealthInfomation />;
+        break;
       default:
-        return;
+        return null;
     }
   };
 
@@ -119,7 +139,7 @@ function PatientProfile() {
           </div>
           {/* tabs */}
           <div className="flex-colo gap-3 px-2 xl:px-12 w-full">
-            {patientTab.map((tab, index) => (
+            {patientTab.filter(tab => userHasAccessToTab(userRole, tab.id)).map((tab, index) => (
               <button
                 onClick={() => setActiveTab(tab.id)}
                 key={index}

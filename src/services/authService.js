@@ -32,8 +32,8 @@ const fetchPatients = async (token) => {
     });
 };
 
-const fecthDoctorAppointments = async (token) => {
-    return axios.get('v1/doctor-appointments', {
+const fecthDoctorAppointmentsForPAtient = async (token, id) => {
+    return axios.get(`v1/doctor-appointments-of-patient/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -67,4 +67,4 @@ const getFetchPatientsCountFunction = (role) => {
     }
 };
 
-export { getFetchPatientsFunction, getFetchPatientsCountFunction, fetchPatientConsultations, fecthDoctorAppointments};
+export { getFetchPatientsFunction, getFetchPatientsCountFunction, fetchPatientConsultations, fecthDoctorAppointmentsForPAtient};

@@ -6,6 +6,7 @@ import { RiDeleteBin6Line, RiDeleteBinLine } from 'react-icons/ri';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { format } from 'date-fns';
 
 const thclass = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
 const tdclass = 'text-start text-sm py-4 px-2 whitespace-nowrap';
@@ -555,7 +556,7 @@ export function AppointmentTable({ data, functions, doctor }) {
               </span>
             </td>
             <td className={tdclass}>
-              <p className="text-xs">{`${item.Start_time} - ${item.End_time}`}</p>
+              <p className="text-xs">{`${format(new Date(`2000-01-01T${item.Start_time}`), 'hh:mm aa')} - ${format(new Date(`2000-01-01T${item.End_time}`), 'hh:mm aa')}`}</p>
             </td>
 
             <td className={tdclass}>

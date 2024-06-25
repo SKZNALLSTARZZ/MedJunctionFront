@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { appointmentsData } from '../Datas';
 import AddAppointmentModal from '../Modals/AddApointmentModal';
 import { AppointmentTable } from '../Tables';
-import { fecthDoctorAppointments } from '../../services/authService';
+import { fecthDoctorAppointmentsForPAtient } from '../../services/authService';
 import Loader from '../Notifications/Loader';
 
-function AppointmentsUsed({ doctor }) {
+function AppointmentsUsed({ doctor, patientId }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState({});
   const [appointment, setAppointment] = useState([]);
@@ -15,7 +15,7 @@ function AppointmentsUsed({ doctor }) {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fecthDoctorAppointments(token);
+      const response = await fecthDoctorAppointmentsForPAtient(token, patientId);
       setAppointment(response.data);
       setLoading(false);
     }
@@ -51,7 +51,8 @@ function AppointmentsUsed({ doctor }) {
     <div className="w-full">
       {open && (
         <AddAppointmentModal
-          datas={data}
+          datas={appointment}
+          mode="preview"
           isOpen={open}
           closeModal={() => {
             handleClose();
