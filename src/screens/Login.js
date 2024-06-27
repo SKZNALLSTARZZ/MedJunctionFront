@@ -20,9 +20,6 @@ function Login() {
     e.preventDefault();
 
     try {
-      console.log(email);
-      console.log(password);
-      console.log(isChecked);
       const response = await axiosInstance.post('/login', {
         email,
         password,
@@ -33,12 +30,20 @@ function Login() {
         const token = response.data.token;
         const role = response.data.role;
         const name = response.data.name;
-        const image = response.data.name;
+        const image = response.data.image;
+        const phone = response.data.phone;
+        const email = response.data.email;
+        const address = response.data.address;
 
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role) ;
-        localStorage.setItem('name', name) ;
-        localStorage.setItem('image', image) ;
+        localStorage.setItem('user', JSON.stringify({
+          name: name,
+          email: email,
+          phone: phone,
+          role: role,
+          token: token,
+          image: image,
+          address: address,
+        }));
 
         console.log("Token : " + token + " Role : " + role);
         navigateBasedOnRole(navigate, role);

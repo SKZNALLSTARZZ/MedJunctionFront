@@ -319,11 +319,11 @@ export const sortsDatas = {
     },
     {
       id: 2,
-      name: 'Available',
+      name: 'available',
     },
     {
       id: 3,
-      name: 'Out of Stock',
+      name: 'unavailable',
     },
   ],
   service: [

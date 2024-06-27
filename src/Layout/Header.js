@@ -11,8 +11,9 @@ import MenuDrawer from '../components/Drawer/MenuDrawer';
 function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const name = localStorage.getItem('name');
-  const image = localStorage.getItem('image');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const name = user.name;
+  const image = user.image;
 
   // toggle drawer
   const toggleDrawer = () => {
@@ -32,7 +33,7 @@ function Header() {
       title: 'Logout',
       icon: AiOutlinePoweroff,
       onClick: () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/login');
       },
     },

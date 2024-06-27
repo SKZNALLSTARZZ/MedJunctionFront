@@ -2,7 +2,7 @@ import axios from '../api/axios';
 
 const fetchPatientConsultations = async (id, token) => {
     return axios.get(`v1/patientconsultations/${id}`, {
-        headers : {
+        headers: {
             Authorization: `Bearer ${token}`,
         },
     });
@@ -10,11 +10,19 @@ const fetchPatientConsultations = async (id, token) => {
 
 const fetchDoctorPatients = async (token) => {
     return axios.get('v1/consulted-patients', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
-  };
+};
+
+const fetchDoctorAppointments = async (token) => {
+    return axios.get('v1/doctor-appointments', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
 
 const fecthDoctorPatientsCount = async (token) => {
     return axios.get('v1/consulted-patient-counts', {
@@ -67,4 +75,19 @@ const getFetchPatientsCountFunction = (role) => {
     }
 };
 
-export { getFetchPatientsFunction, getFetchPatientsCountFunction, fetchPatientConsultations, fecthDoctorAppointmentsForPAtient};
+const fetchAllMedicines = async (token) => {
+    return axios.get('v1/medicine', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
+
+export {
+    getFetchPatientsFunction,
+    getFetchPatientsCountFunction,
+    fetchPatientConsultations,
+    fecthDoctorAppointmentsForPAtient,
+    fetchDoctorAppointments,
+    fetchAllMedicines,
+};

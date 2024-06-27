@@ -24,7 +24,10 @@ function Patients() {
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(true);
 
-  const userRole = localStorage.getItem('role');
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const userRole = user.role;
+  const token = user.token;
   const fetchPatientsFunction = getFetchPatientsFunction(userRole);
   const fetchPatientsCountFunction = getFetchPatientsCountFunction(userRole);
 
@@ -36,8 +39,6 @@ function Patients() {
 
   const fetchPatients = async () => {
     try {
-      const token = localStorage.getItem('token');
-
       const [patientsRes, countRes] = await Promise.all([
         fetchPatientsFunction(token),
         fetchPatientsCountFunction(token)
@@ -74,7 +75,6 @@ function Patients() {
 
   const deletePatient = async (id) => {
     try {
-      const token = localStorage.getItem('token');
       await axiosInstance.delete(`v1/patient/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,

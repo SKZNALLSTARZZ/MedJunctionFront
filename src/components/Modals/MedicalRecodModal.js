@@ -8,7 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 function MedicalRecodModal({ closeModal, isOpen, datas }) {
   const navigate = useNavigate();
-  const userRole = localStorage.getItem('role');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userRole = user.role;
   const isUserAuthorized = userRole === 'admin' || userRole === 'receptionist';
   const vitalSignsArray = datas?.Vital_signs ? Object.entries(datas.Vital_signs) : [];
   const picturesArray = datas?.Pictures ? JSON.parse(datas.Pictures) : [];

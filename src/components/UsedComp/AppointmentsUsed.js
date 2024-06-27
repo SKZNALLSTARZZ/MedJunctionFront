@@ -7,16 +7,17 @@ import Loader from '../Notifications/Loader';
 
 function AppointmentsUsed({ doctor, patientId }) {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState({});
-  const [appointment, setAppointment] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
 
   const fetchAppointments = async () => {
     try {
       const response = await fecthDoctorAppointmentsForPAtient(token, patientId);
-      setAppointment(response.data);
+      setAppointments(response.data);
       setLoading(false);
     }
     catch (err) {
@@ -27,13 +28,13 @@ function AppointmentsUsed({ doctor, patientId }) {
   };
 
   const handleEventClick = (event) => {
-    setData(event);
+    setSelectedAppointment(event);
     setOpen(!open);
   };
 
   const handleClose = () => {
     setOpen(!open);
-    setData({});
+    setSelectedAppointment(null);
   };
 
   useEffect(() => {
@@ -49,9 +50,9 @@ function AppointmentsUsed({ doctor, patientId }) {
   }
   return (
     <div className="w-full">
-      {open && (
+      {open && selectedAppointment &&(
         <AddAppointmentModal
-          datas={appointment}
+          datas={selectedAppointment}
           mode="preview"
           isOpen={open}
           closeModal={() => {
@@ -62,7 +63,7 @@ function AppointmentsUsed({ doctor, patientId }) {
       <h1 className="text-sm font-medium mb-6">Appointments</h1>
       <div className="w-full overflow-x-scroll">
         <AppointmentTable
-          data={appointment}
+          data={appointments}
           doctor={doctor}
           functions={{
             preview: handleEventClick,

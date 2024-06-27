@@ -10,28 +10,21 @@ import {
   TimePickerComp,
 } from '../Form';
 import { BiChevronDown, BiPlus } from 'react-icons/bi';
-import { memberData, servicesData, sortsDatas } from '../Datas';
+import { servicesData } from '../Datas';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import PatientMedicineServiceModal from './PatientMedicineServiceModal';
 import { parse } from 'date-fns';
 
-const doctorsData = memberData.map((item) => {
-  return {
-    id: item.id,
-    name: item.title,
-  };
-});
-
 function AddAppointmentModal({ closeModal, isOpen, datas, mode }) {
-  const [services, setServices] = useState(servicesData[0]);
+  const [services, setServices] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
-  const [status, setStatus] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [patients, setPatients] = useState([]);
-  const [descriptions, setDescriptions] = useState([]);
+  const [status, setStatus] = useState('');
+  const [doctors, setDoctors] = useState('');
+  const [patients, setPatients] = useState('');
+  const [descriptions, setDescriptions] = useState('');
   const [shares, setShares] = useState({
     email: false,
     sms: false,
@@ -47,16 +40,17 @@ function AddAppointmentModal({ closeModal, isOpen, datas, mode }) {
   const today = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
-    if (datas[0]?.Patient.name) {
-      //setServices(datas?.service);
-      setPatients(datas[0]?.Patient.name)
-      setStartDate(parse(datas[0]?.Date, 'MMM d, yyyy', new Date()));
-      setStartTime(new Date(`${today}T${datas[0].Start_time}`));
-      setEndTime(new Date(`${today}T${datas[0].End_time}`));
-      setStatus(datas[0]?.Status);
-      setDoctors(datas[0]?.Doctor.name);
-      setDescriptions(datas[0]?.Description);
+    if (datas && typeof datas === 'object') {
+      setServices(datas?.Treatment);
+      setPatients(datas?.Patient.name)
+      setStartDate(parse(datas?.Date, 'MMM d, yyyy', new Date()));
+      setStartTime(new Date(`${today}T${datas.Start_time}`));
+      setEndTime(new Date(`${today}T${datas.End_time}`));
+      setStatus(datas?.Status);
+      setDoctors(datas?.Doctor.name);
+      setDescriptions(datas?.Description);
       //setShares(datas?.shareData);
+      console.log(datas);
     }
   }, [datas]);
 
@@ -110,7 +104,7 @@ function AddAppointmentModal({ closeModal, isOpen, datas, mode }) {
               disabled={isPreview}
             >
               <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {services.name} <BiChevronDown className="text-xl" />
+                {services} <BiChevronDown className="text-xl" />
               </div>
             </Select>
           </div>
@@ -207,20 +201,22 @@ function AddAppointmentModal({ closeModal, isOpen, datas, mode }) {
         )}
 
         <div className="grid sm:grid-cols-2 gap-4 w-full">
-          <button
-            onClick={closeModal}
-            className="bg-red-600 bg-opacity-5 text-red-600 text-sm p-4 rounded-lg font-light"
-          >
-            {datas?.title ? 'Discard' : 'Cancel'}
-          </button>
           {!isPreview && (
-            <Button
-              label="Save"
-              Icon={HiOutlineCheckCircle}
-              onClick={() => {
-                toast.error('This feature is not available yet');
-              }}
-            />
+            <>
+              <button
+                onClick={closeModal}
+                className="bg-red-600 bg-opacity-5 text-red-600 text-sm p-4 rounded-lg font-light"
+              >
+                {datas?.title ? 'Discard' : 'Cancel'}
+              </button>
+              <Button
+                label="Save"
+                Icon={HiOutlineCheckCircle}
+                onClick={() => {
+                  toast.error('This feature is not available yet');
+                }}
+              />
+            </>
           )}
         </div>
       </div>

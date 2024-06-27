@@ -85,10 +85,10 @@ export function Transactiontable({ data, action, functions }) {
             <td className={tdclass}>
               <span
                 className={`py-1 px-4 ${item.status === 'Paid'
-                    ? 'bg-subMain text-subMain'
-                    : item.status === 'Pending'
-                      ? 'bg-orange-500 text-orange-500'
-                      : item.status === 'Cancel' && 'bg-red-600 text-red-600'
+                  ? 'bg-subMain text-subMain'
+                  : item.status === 'Pending'
+                    ? 'bg-orange-500 text-orange-500'
+                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
                   } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.status}
@@ -194,7 +194,7 @@ export function InvoiceTable({ data }) {
 }
 
 // prescription table
-export function MedicineTable({ data, onEdit }) {
+export function MedicineTable({ data, onEdit, userRole }) {
   const DropDown1 = [
     {
       title: 'Edit',
@@ -217,12 +217,14 @@ export function MedicineTable({ data, onEdit }) {
         <tr>
           <th className={thclass}>Name</th>
           <th className={thclass}>
-            Price <span className="text-xs font-light">(Tsh)</span>
+            Price <span className="text-xs font-light">($)</span>
           </th>
           <th className={thclass}>Status</th>
           <th className={thclass}>InStock</th>
           <th className={thclass}>Measure</th>
-          <th className={thclass}>Actions</th>
+          {(userRole === 'admin' || userRole === 'pharmacist') && (
+            <th className={thclass}>Actions</th>
+          )}
         </tr>
       </thead>
       <tbody>
@@ -237,23 +239,25 @@ export function MedicineTable({ data, onEdit }) {
             <td className={`${tdclass} font-semibold`}>{item?.price}</td>
             <td className={tdclass}>
               <span
-                className={`text-xs font-medium ${item?.status === 'Out of stock'
-                    ? 'text-red-600'
-                    : 'text-green-600'
+                className={`text-xs font-medium ${item?.status === 'unavailable'
+                  ? 'text-red-600'
+                  : 'text-green-600'
                   }`}
               >
                 {item?.status}
               </span>
             </td>
-            <td className={tdclass}>{item?.stock}</td>
+            <td className={tdclass}>{item?.instock}</td>
             <td className={tdclass}>{item?.measure}</td>
-            <td className={tdclass}>
-              <MenuSelect datas={DropDown1} item={item}>
-                <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                  <BiDotsHorizontalRounded />
-                </div>
-              </MenuSelect>
-            </td>
+            {(userRole === 'admin' || userRole === 'pharmacist') && (
+              <td className={tdclass}>
+                <MenuSelect datas={DropDown1} item={item}>
+                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
+                    <BiDotsHorizontalRounded />
+                  </div>
+                </MenuSelect>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -402,8 +406,8 @@ export function PatientTable({ data, functions, used, userRole }) {
             <td className={tdclasse}>
               <span
                 className={`py-1 px-4 ${item.gender === 'male'
-                    ? 'bg-subMain text-subMain'
-                    : 'bg-orange-500 text-orange-500'
+                  ? 'bg-subMain text-subMain'
+                  : 'bg-orange-500 text-orange-500'
                   } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.gender}
@@ -535,21 +539,21 @@ export function AppointmentTable({ data, functions, doctor }) {
             <td className={tdclass}>
               <p className="text-xs">{item.Date}</p>
             </td>
-              <td className={tdclass}>
-                <h4 className="text-xs font-medium">
-                  {doctor ? item.Patient.name : item.Doctor.title}
-                </h4>
-                <p className="text-xs mt-1 text-textGray">
-                  {doctor ? item.Patient.phone : item.Doctor.phone}
-                </p>
-              </td>
+            <td className={tdclass}>
+              <h4 className="text-xs font-medium">
+                {doctor ? item.Patient.name : item.Doctor.title}
+              </h4>
+              <p className="text-xs mt-1 text-textGray">
+                {doctor ? item.Patient.phone : item.Doctor.phone}
+              </p>
+            </td>
             <td className={tdclass}>
               <span
                 className={`py-1  px-4 ${item.Status === 'approved'
-                    ? 'bg-subMain text-subMain'
-                    : item.Status === 'pending'
-                      ? 'bg-orange-500 text-orange-500'
-                      : item.Status === 'cancelled' && 'bg-red-600 text-red-600'
+                  ? 'bg-subMain text-subMain'
+                  : item.Status === 'pending'
+                    ? 'bg-orange-500 text-orange-500'
+                    : item.Status === 'cancelled' && 'bg-red-600 text-red-600'
                   } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.Status}
@@ -608,10 +612,10 @@ export function PaymentTable({ data, functions, doctor }) {
             <td className={tdclass}>
               <span
                 className={`py-1  px-4 ${item.status === 'Paid'
-                    ? 'bg-subMain text-subMain'
-                    : item.status === 'Pending'
-                      ? 'bg-orange-500 text-orange-500'
-                      : item.status === 'Cancel' && 'bg-red-600 text-red-600'
+                  ? 'bg-subMain text-subMain'
+                  : item.status === 'Pending'
+                    ? 'bg-orange-500 text-orange-500'
+                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
                   } bg-opacity-10 text-xs rounded-xl`}
               >
                 {item.status}
@@ -745,14 +749,14 @@ export function MedicineDosageTable({ data, functions, button }) {
           <th className={thclasse}>Item</th>
           <th className={thclasse}>
             Item Price
-            <span className="text-xs font-light ml-1">(Tsh)</span>
+            <span className="text-xs font-light ml-1">($)</span>
           </th>
           <th className={thclasse}>Dosage</th>
           <th className={thclasse}>Instruction</th>
           <th className={thclasse}>Quantity</th>
           <th className={thclasse}>
             Amout
-            <span className="text-xs font-light ml-1">(Tsh)</span>
+            <span className="text-xs font-light ml-1">($)</span>
           </th>
           {button && <th className={thclasse}>Actions</th>}
         </tr>

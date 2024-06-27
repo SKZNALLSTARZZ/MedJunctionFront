@@ -14,12 +14,14 @@ function Doctors() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+
   useEffect(() => {
     fetchDoctors();
   }, []);
   const fetchDoctors = async () => {
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.get('http://127.0.0.1:8000/api/Doctor', {
         headers: {
           Authorization: `Bearer ${token}`,

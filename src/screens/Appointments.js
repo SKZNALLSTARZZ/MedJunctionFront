@@ -6,7 +6,8 @@ import { BiChevronLeft, BiChevronRight, BiPlus, BiTime } from 'react-icons/bi';
 import { HiOutlineViewGrid } from 'react-icons/hi';
 import { HiOutlineCalendarDays } from 'react-icons/hi2';
 import AddAppointmentModal from '../components/Modals/AddApointmentModal';
-import { servicesData } from '../components/Datas';
+import { fetchDoctorAppointments } from '../services/authService';
+import Loader from '../components/Notifications/Loader';
 
 // custom toolbar
 const CustomToolbar = (toolbar) => {
@@ -82,14 +83,13 @@ const CustomToolbar = (toolbar) => {
                 item.view === 'month'
                   ? goToMonth
                   : item.view === 'week'
-                  ? goToWeek
-                  : goToDay
+                    ? goToWeek
+                    : goToDay
               }
-              className={`border-l text-xl py-2 flex-colo border-subMain ${
-                toolbar.view === item.view
+              className={`border-l text-xl py-2 flex-colo border-subMain ${toolbar.view === item.view
                   ? 'bg-subMain text-white'
                   : 'text-subMain'
-              }`}
+                }`}
             >
               {item.view === 'month' ? (
                 <HiOutlineViewGrid />
@@ -110,6 +110,12 @@ function Appointments() {
   const localizer = momentLocalizer(moment);
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState({});
+  const [appointments, setAppointments] = React.useState([]);
+  const [appointmentsLoading, setAppointmentsLoading] = React.useState(true);
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+  const userRole = user.role;
 
   // handle modal close
   const handleClose = () => {
@@ -117,76 +123,76 @@ function Appointments() {
     setData({});
   };
 
-  const events = [
-    {
-      id: 0,
-      start: moment({ hours: 7 }).toDate(),
-      end: moment({ hours: 9 }).toDate(),
-      color: '#FB923C',
-      title: 'John Doe',
-      message: 'He is not sure about the time',
-      service: servicesData[1],
-      shareData: {
-        email: true,
-        sms: true,
-        whatsapp: false,
-      },
-    },
-    {
-      id: 1,
-      start: moment({ hours: 12 }).toDate(),
-      end: moment({ hours: 13 }).toDate(),
-      color: '#FC8181',
-      title: 'Minah Mmassy',
-      message: 'She is coming for checkup',
-      service: servicesData[2],
-      shareData: {
-        email: false,
-        sms: true,
-        whatsapp: false,
-      },
-    },
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetchDoctorAppointments(token);
+      setAppointments(response.data);
+      setAppointmentsLoading(false);
+    }
+    catch (err) {
+      console.error('Error fetching data:', err.message);
+    } finally {
+      setAppointmentsLoading(false);
+    }
+  };
 
-    {
-      id: 2,
-      start: moment({ hours: 14 }).toDate(),
-      end: moment({ hours: 17 }).toDate(),
-      color: '#FFC107',
-      title: 'Irene P. Smith',
-      message: 'She is coming for checkup. but she is not sure about the time',
-      service: servicesData[3],
-      shareData: {
-        email: true,
-        sms: true,
-        whatsapp: true,
-      },
+  React.useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const events = appointments.map((item, index) => ({
+    id: index,
+    start: moment(`${item.Date} ${item.Start_time}`, 'MMM D, YYYY HH:mm:ss').toDate(),
+    end: moment(`${item.Date} ${item.End_time}`, 'MMM D, YYYY HH:mm:ss').toDate(),
+    color: '#FB923C',
+    title: item.Patient.name,
+    message: item.Description,
+    service: item.Treatment,
+    shareData: {
+      email: true,
+      sms: true,
+      whatsapp: false,
     },
-  ];
+    originalData: item,
+  }));
 
   // onClick event handler
   const handleEventClick = (event) => {
-    setData(event);
+    setData(event.originalData);
     setOpen(!open);
+    console.log(event.originalData);
   };
 
+  if (appointmentsLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {open && (
         <AddAppointmentModal
           datas={data}
           isOpen={open}
+          mode="preview"
           closeModal={() => {
             handleClose();
           }}
         />
       )}
       {/* calender */}
-      <button
-        onClick={handleClose}
-        className="w-16 animate-bounce h-16 border border-border z-50 bg-subMain text-white rounded-full flex-colo fixed bottom-8 right-12 button-fb"
-      >
-        <BiPlus className="text-2xl" />
-      </button>
+      {['admin', 'receptionist'].includes(userRole) && (
+        <button
+          onClick={handleClose}
+          className="w-16 animate-bounce h-16 border border-border z-50 bg-subMain text-white rounded-full flex-colo fixed bottom-8 right-12 button-fb"
+        >
+          <BiPlus className="text-2xl" />
+        </button>
+      )}
 
       <Calendar
         localizer={localizer}

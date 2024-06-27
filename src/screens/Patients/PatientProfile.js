@@ -23,9 +23,9 @@ function PatientProfile() {
   const [consultation, setConsultation] = React.useState([]);
   const [consultationLoading, setConsultationLoading] = React.useState(true);
 
-  const token = localStorage.getItem('token');
-  const userRole = localStorage.getItem('role');
-  const allAccessRoles = ['patient', 'receptionist', 'admin'];
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+  const userRole = user.role;
 
   const accessibleTabs = {
     doctor: [1, 2, 5, 6],
@@ -92,7 +92,7 @@ function PatientProfile() {
         if (userHasAccessToTab(userRole, 5)) return <PersonalInfo titles={false} mode="preview" data={patient}/>;
         break;
       case 6:
-        if (userHasAccessToTab(userRole, 6)) return <HealthInfomation />;
+        if (userHasAccessToTab(userRole, 6)) return <HealthInfomation mode="preview" data={patient}/>;
         break;
       default:
         return null;

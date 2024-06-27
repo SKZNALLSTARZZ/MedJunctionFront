@@ -6,12 +6,20 @@ const useAuth = () => {
   const [role, setRole] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('role');
-    console.log('Token retrieved:', token);
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (user) {
+      const token = user.token;
+      const userRole = user.role;
+      console.log('Token retrieved:', token);
 
-    setIsAuthenticated(!!token);
-    setRole(userRole);
+      setIsAuthenticated(!!token);
+      setRole(userRole);
+    } else {
+      setIsAuthenticated(false);
+      setRole(null);
+    }
+
     setLoading(false);
   }, []);
 

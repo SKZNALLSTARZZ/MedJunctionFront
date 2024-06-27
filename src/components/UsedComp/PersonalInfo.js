@@ -170,6 +170,8 @@ function PersonalInfo({ titles, mode, data}) {
     }else if (!isPreview) { 
       setGender(sortsDatas.genderFilter[0].name);
     }
+
+    console.log(isPreview);
   }, [isPreview, data]);
 
   return (
