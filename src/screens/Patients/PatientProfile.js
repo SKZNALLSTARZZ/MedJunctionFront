@@ -27,6 +27,8 @@ function PatientProfile() {
   const token = user.token;
   const userRole = user.role;
 
+  const isDoctor = userRole === 'patient';
+
   const accessibleTabs = {
     doctor: [1, 2, 5, 6],
     nurse: [1, 2, 5, 6],
@@ -80,13 +82,13 @@ function PatientProfile() {
         if (userHasAccessToTab(userRole, 1)) return <MedicalRecord data={consultation} />;
         break;
       case 2:
-        if (userHasAccessToTab(userRole, 2)) return <AppointmentsUsed doctor={true} patientId={id} />;
+        if (userHasAccessToTab(userRole, 2)) return <AppointmentsUsed doctor={!isDoctor} patientId={id} />;
         break;
       case 3:
         if (userHasAccessToTab(userRole, 3)) return <InvoiceUsed />;
         break;
       case 4:
-        if (userHasAccessToTab(userRole, 4)) return <PaymentsUsed doctor={false} />;
+        if (userHasAccessToTab(userRole, 4)) return <PaymentsUsed doctor={!isDoctor} />;
         break;
       case 5:
         if (userHasAccessToTab(userRole, 5)) return <PersonalInfo titles={false} mode="preview" data={patient}/>;
@@ -98,6 +100,8 @@ function PatientProfile() {
         return null;
     }
   };
+
+  console.log(consultation);
 
   if (loading || consultationLoading) {
     return (

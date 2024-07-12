@@ -34,6 +34,7 @@ function Login() {
         const phone = response.data.phone;
         const email = response.data.email;
         const address = response.data.address;
+        const patientId = response.data.patientId;
 
         localStorage.setItem('user', JSON.stringify({
           name: name,
@@ -43,6 +44,7 @@ function Login() {
           token: token,
           image: image,
           address: address,
+          patientId: patientId,
         }));
 
         console.log("Token : " + token + " Role : " + role);

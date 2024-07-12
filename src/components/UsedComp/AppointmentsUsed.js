@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { appointmentsData } from '../Datas';
 import AddAppointmentModal from '../Modals/AddApointmentModal';
 import { AppointmentTable } from '../Tables';
-import { fecthDoctorAppointmentsForPAtient } from '../../services/authService';
+import { fecthDoctorAppointmentsForPAtient, fetchPatientAppointments } from '../../services/authService';
 import Loader from '../Notifications/Loader';
 
 function AppointmentsUsed({ doctor, patientId }) {
@@ -13,16 +12,20 @@ function AppointmentsUsed({ doctor, patientId }) {
 
   const user = JSON.parse(localStorage.getItem('user'));
   const token = user.token;
+  const userRole = user.role;
 
   const fetchAppointments = async () => {
     try {
-      const response = await fecthDoctorAppointmentsForPAtient(token, patientId);
+      let response;
+      if (userRole === 'patient') {
+        response = await fetchPatientAppointments(token, patientId);
+      } else {
+        response = await fecthDoctorAppointmentsForPAtient(token, patientId);
+      }
       setAppointments(response.data);
       setLoading(false);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Error fetching data:', err.message);
-    } finally {
       setLoading(false);
     }
   };

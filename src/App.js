@@ -60,7 +60,7 @@ function App() {
           <Route
             path="/payments"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'receptionist']}>
+              <ProtectedRoute allowedRoles={['admin', 'receptionist', 'patient']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -74,7 +74,7 @@ function App() {
           <Route
             path="/patients"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'doctor', 'receptionist']}>
+              <ProtectedRoute allowedRoles={['admin', 'doctor', 'receptionist', 'nurse', 'patient']}>
                 <ProtectedLayout />
               </ProtectedRoute>
               }
@@ -115,7 +115,7 @@ function App() {
           {/* <Route path="/Register" element={<Register />} /> */}
           <Route path="/appointments" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'receptionist','patient','nurse']}><Appointments /></ProtectedRoute>} />
           <Route path="/campaigns" element={<ProtectedRoute allowedRoles={['admin', 'receptionist']}><Campaings /></ProtectedRoute>} />
-          <Route path="/medicine" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist']}><Medicine /></ProtectedRoute>} />
+          <Route path="/medicine" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist', 'patient']}><Medicine /></ProtectedRoute>} />
           <Route path="/services" element={<ProtectedRoute allowedRoles={['admin', 'receptionist', 'patient']}><Services /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'patient', 'receptionist', 'pharmacist']}><Settings /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
