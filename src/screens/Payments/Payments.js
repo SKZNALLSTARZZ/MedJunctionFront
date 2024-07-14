@@ -12,6 +12,8 @@ import {
 import { toast } from 'react-hot-toast';
 import { BsCalendarMonth } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../../components/Notifications/Loader';
+import { fetchPayments } from '../../services/authService';
 
 function Payments() {
   const [status, setStatus] = useState(sortsDatas.status[0]);
@@ -19,7 +21,31 @@ function Payments() {
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [startDate, endDate] = dateRange;
   const navigate = useNavigate();
+  const [payments, setPayments] = React.useState([]);
+  const [total, setTotal] = React.useState([]);
+  const [paymentsLoading, setPaymentsLoading] = React.useState(true)
 
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+
+
+  const fetchAllPayments = async () => {
+    try {
+      const response = await fetchPayments(token);
+      setPayments(response.data.payments);
+      setTotal(response.data.totals);
+      setPaymentsLoading(false);
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    } finally {
+      setPaymentsLoading(false);
+    }
+  };
+ console.log(payments.payments);
+
+  React.useEffect(() => {
+    fetchAllPayments();
+  }, []);
   const sorts = [
     {
       id: 2,
@@ -39,21 +65,21 @@ function Payments() {
     {
       id: 1,
       title: 'Today Payments',
-      value: '4,42,236',
+      value: total.today,
       color: ['bg-subMain', 'text-subMain'],
       icon: BiTime,
     },
     {
       id: 2,
       title: 'Monthly Payments',
-      value: '12,42,500',
+      value: total.month,
       color: ['bg-orange-500', 'text-orange-500'],
       icon: BsCalendarMonth,
     },
     {
       id: 3,
       title: 'Yearly Payments',
-      value: '345,70,000',
+      value: total.year,
       color: ['bg-green-500', 'text-green-500'],
       icon: MdOutlineCalendarMonth,
     },
@@ -67,6 +93,15 @@ function Payments() {
     navigate(`/payments/preview/${id}`);
   };
 
+  if (paymentsLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {/* add button */}
@@ -154,7 +189,7 @@ function Payments() {
         </div>
         <div className="mt-8 w-full overflow-x-scroll">
           <Transactiontable
-            data={transactionData}
+            data={payments}
             action={true}
             functions={{
               edit: editPayment,

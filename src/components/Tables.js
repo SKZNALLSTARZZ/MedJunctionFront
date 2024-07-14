@@ -67,7 +67,7 @@ export function Transactiontable({ data, action, functions }) {
               <div className="flex gap-4 items-center">
                 <span className="w-12">
                 <img
-                    src={item.img_url}
+                    src={`data:image/jpeg;base64,${item.img_data}`}
                     className="w-full h-12 rounded-full object-cover border border-border"
                   />
                 </span>
@@ -156,7 +156,7 @@ export function InvoiceTable({ data, isPatient}) {
               <div className="flex gap-4 items-center">
                 <span className="w-12">
                   <img
-                    //src={item?.to?.image}
+                    src={`data:image/jpeg;base64,${item.img_data}`}
                     alt={item?.name}
                     className="w-full h-12 rounded-full object-cover border border-border"
                   />

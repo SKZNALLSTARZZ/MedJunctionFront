@@ -208,7 +208,7 @@ function Dashboard() {
               >
                 <div className="flex gap-4 items-center">
                   <img
-                    src={patient.img_url}
+                    src={`data:image/jpeg;base64,${patient.img_data}`}
                     alt="member"
                     className="w-10 h-10 rounded-md object-cover"
                   />

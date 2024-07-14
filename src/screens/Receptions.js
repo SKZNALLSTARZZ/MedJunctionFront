@@ -6,9 +6,29 @@ import Layout from '../Layout';
 import { Button } from '../components/Form';
 import { DoctorsTable } from '../components/Tables';
 import AddDoctorModal from '../components/Modals/AddDoctorModal';
-import { receptionsData } from '../components/Datas';
+import { fetchReceptionists } from '../services/authService';
+import Loader from '../components/Notifications/Loader';
 
 function Receptions() {
+  const [receptionists, setReceptionists] = React.useState([]);
+  const [ReceptionistsLoading, setReceptionistsLoading] = React.useState(true)
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+
+
+  const fetchAllReceptionists = async () => {
+    try {
+      const response = await fetchReceptionists(token);
+      setReceptionists(response.data);
+      setReceptionistsLoading(false);
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    } finally {
+      setReceptionistsLoading(false);
+    }
+  };
+ console.log(receptionists);
   const [isOpen, setIsOpen] = React.useState(false);
   const [data, setData] = React.useState({});
 
@@ -17,11 +37,24 @@ function Receptions() {
     setData({});
   };
 
+  React.useEffect(() => {
+    fetchAllReceptionists();
+  }, []);
+
   const preview = (data) => {
     setIsOpen(true);
     setData(data);
   };
 
+  if (ReceptionistsLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {
@@ -74,7 +107,7 @@ function Receptions() {
         <div className="mt-8 w-full overflow-x-scroll">
           <DoctorsTable
             doctor={false}
-            data={receptionsData}
+            data={receptionists}
             functions={{
               preview: preview,
             }}

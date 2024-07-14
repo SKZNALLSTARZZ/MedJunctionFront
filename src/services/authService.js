@@ -95,6 +95,27 @@ const fetchPatients = async (token) => {
         },
     });
 };
+const fetchDoctors = async (token) => {
+    return axios.get('v1/doctor', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+const fetchReceptionists = async (token) => {
+    return axios.get('v1/receptionist', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+const fetchPayments = async (token) => {
+    return axios.get('v1/get_All_Payments', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
 const fetchPatientsCount = async (token) => {
     return axios.get('v1/Count', {
         headers: {
@@ -195,4 +216,7 @@ export {
     fetchPatientInvoices,
     fetchInvoices,
     fetchInvoiceDetails,
+    fetchDoctors,
+    fetchReceptionists,
+    fetchPayments,
 };

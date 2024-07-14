@@ -7,30 +7,30 @@ import { Button } from '../../components/Form';
 import { DoctorsTable } from '../../components/Tables';
 import { useNavigate } from 'react-router-dom';
 import AddDoctorModal from '../../components/Modals/AddDoctorModal';
-import axios from 'axios';
+import { fetchDoctors } from '../../services/authService';
+import Loader from '../../components/Notifications/Loader';
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const [doctorsLoading, setDoctorsLoading] = React.useState(true)
 
   const user = JSON.parse(localStorage.getItem('user'));
   const token = user.token;
 
   useEffect(() => {
-    fetchDoctors();
+    fetchAllDoctors();
   }, []);
-  const fetchDoctors = async () => {
+  const fetchAllDoctors = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/Doctor', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setDoctors(response.data.data);
-      console.log(response.data.data);
-    } catch (error) {
-      console.error('Error fetching doctors data:', error.message);
+      const response = await fetchDoctors(token);
+      setDoctors(response.data);
+      setDoctorsLoading(false);
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    } finally {
+      setDoctorsLoading(false);
     }
   };
 
@@ -42,6 +42,15 @@ function Doctors() {
     navigate(`/doctors/preview/${data.id}`);
   };
 
+  if (doctorsLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {
