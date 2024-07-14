@@ -32,8 +32,39 @@ const fecthDoctorPatientsCount = async (token) => {
     });
 };
 
+const fecthLastFivePatient = async (token) => {
+    return axios.get('v1/get_Last_Five_Patients', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fecthTodayAppointments = async (token) => {
+    return axios.get('v1/Today_Appointments', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchLastFivePayment = async (token) => {
+    return axios.get('v1/get_Last_Five_Payments', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const fetchPatients = async (token) => {
     return axios.get('v1/patient', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+const fetchPatientsCount = async (token) => {
+    return axios.get('v1/Count', {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -46,7 +77,33 @@ const fecthDoctorAppointmentsForPAtient = async (token, id) => {
             Authorization: `Bearer ${token}`,
         },
     });
-}
+};
+const fetchDashboardDataCount = async (token) => {
+        // Array of requests
+        return  [
+            axios.get('v1/Count_All_Patient', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            axios.get('v1/Count_All_Appointment', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            axios.get('v1/Count_All_Prescription', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            axios.get('v1/Count_All_Payment', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+        ];
+    };
+
 
 
 const getFetchPatientsFunction = (role) => {
@@ -67,9 +124,9 @@ const getFetchPatientsCountFunction = (role) => {
         case 'doctor':
             return fecthDoctorPatientsCount;
         case 'admin':
-            return fetchPatients;
+            return fetchPatientsCount;
         case 'receptionist':
-            return fetchPatients;
+            return fetchPatientsCount;
         default:
             throw new Error('Role not recognized');
     }
@@ -77,6 +134,13 @@ const getFetchPatientsCountFunction = (role) => {
 
 const fetchAllMedicines = async (token) => {
     return axios.get('v1/medicine', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
+const fetchAllTreatments = async (token) => {
+    return axios.get('v1/treatment', {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -90,4 +154,9 @@ export {
     fecthDoctorAppointmentsForPAtient,
     fetchDoctorAppointments,
     fetchAllMedicines,
+    fetchLastFivePayment,
+    fetchDashboardDataCount,
+    fecthLastFivePatient,
+    fecthTodayAppointments,
+    fetchAllTreatments,
 };

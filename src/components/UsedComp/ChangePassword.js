@@ -46,12 +46,13 @@ function ChangePassword() {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.put('/v1/change_password', {
+      const response = await axiosInstance.put('v1/change_password', {
         old_password: oldPassword,
         new_password: newPassword,
       }, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
         },
       });
 

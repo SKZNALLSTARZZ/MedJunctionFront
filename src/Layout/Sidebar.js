@@ -3,7 +3,8 @@ import { MenuDatas } from '../components/Datas';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
-  const userRole = localStorage.getItem('role');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userRole = user.role;
   const currentPath = (path) => {
     const currentPath =
       window.location.pathname.split('/')[1] === path.split('/')[1];

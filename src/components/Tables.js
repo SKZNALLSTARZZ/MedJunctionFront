@@ -66,36 +66,24 @@ export function Transactiontable({ data, action, functions }) {
             <td className={tdclass}>
               <div className="flex gap-4 items-center">
                 <span className="w-12">
-                  <img
-                    src={item.user.image}
-                    alt={item.user.title}
+                <img
+                    src={item.img_url}
                     className="w-full h-12 rounded-full object-cover border border-border"
                   />
                 </span>
 
                 <div>
-                  <h4 className="text-sm font-medium">{item.user.title}</h4>
+                <h4 className="text-sm font-medium">{item.name}</h4>
                   <p className="text-xs mt-1 text-textGray">
-                    {item.user.phone}
+                    {item.phone}
                   </p>
                 </div>
               </div>
             </td>
-            <td className={tdclass}>{item.date}</td>
-            <td className={tdclass}>
-              <span
-                className={`py-1 px-4 ${item.status === 'Paid'
-                  ? 'bg-subMain text-subMain'
-                  : item.status === 'Pending'
-                    ? 'bg-orange-500 text-orange-500'
-                    : item.status === 'Cancel' && 'bg-red-600 text-red-600'
-                  } bg-opacity-10 text-xs rounded-xl`}
-              >
-                {item.status}
-              </span>
-            </td>
+            <td className={tdclass}>{item.created_at}</td>
+            <td className={tdclass}>{item.status}</td>
             <td className={`${tdclass} font-semibold`}>{item.amount}</td>
-            <td className={tdclass}>{item.method}</td>
+            <td className={tdclass}>{item.payment_type}</td>
             {action && (
               <td className={tdclass}>
                 <MenuSelect datas={DropDown1} item={item}>
@@ -288,11 +276,12 @@ export function ServiceTable({ data, onEdit }) {
       <thead className="bg-dry rounded-md overflow-hidden">
         <tr>
           <th className={thclass}>Name</th>
+          <th className={thclass}>service</th>
+          <th className={thclass}>speciality</th>
           <th className={thclass}>Created At</th>
           <th className={thclass}>
-            Price <span className="text-xs font-light">(Tsh)</span>
+            Price <span className="text-xs font-light">($)</span>
           </th>
-          <th className={thclass}>Status</th>
           <th className={thclass}>Actions</th>
         </tr>
       </thead>
@@ -305,16 +294,10 @@ export function ServiceTable({ data, onEdit }) {
             <td className={tdclass}>
               <h4 className="text-sm font-medium">{item?.name}</h4>
             </td>
+            <td className={tdclass}>{item?.service}</td>
+            <td className={tdclass}>{item?.speciality}</td>
             <td className={tdclass}>{item?.date}</td>
             <td className={`${tdclass} font-semibold`}>{item?.price}</td>
-            <td className={tdclass}>
-              <span
-                className={`text-xs font-medium ${!item?.status ? 'text-red-600' : 'text-green-600'
-                  }`}
-              >
-                {!item?.status ? 'Disabled' : 'Enabled'}
-              </span>
-            </td>
             <td className={tdclass}>
               <MenuSelect datas={DropDown1} item={item}>
                 <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
@@ -383,7 +366,7 @@ export function PatientTable({ data, functions, used, userRole }) {
             <td className={tdclasse}>{item.id}</td>
             <td className={tdclasse}>
               <div className="flex gap-4 items-center">
-                {!used && (
+                 {!used && (
                   <span className="w-12">
                     {item.img_data && (
                       <img
@@ -492,7 +475,15 @@ export function DoctorsTable({ data, functions, doctor }) {
             <td className={tdclass}>{index + 1}</td>
             <td className={tdclass}>
               <div className="flex gap-4 items-center">
-
+                  <span className="w-12">
+                    {item.img_data && (
+                      <img
+                        src={`data:image/jpeg;base64,${item.img_data}`}
+                        alt="Patient Image"
+                        className="w-full h-12 rounded-full object-cover border border-border"
+                      />
+                    )}
+                  </span>
                 <h4 className="text-sm font-medium">{item.name}</h4>
               </div>
             </td>

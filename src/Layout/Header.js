@@ -69,7 +69,7 @@ function Header() {
               <MenuSelect datas={DropDown1}>
                 <div className="flex gap-4 items-center p-4 rounded-lg">
                   <img
-                    src={`data:image/jpeg;base64,${image}`}
+                    src={`data:image/jpeg;base64,${user.image}`}
                     alt="user"
                     className="w-12 border border-border object-cover h-12 rounded-full"
                   />

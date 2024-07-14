@@ -39,7 +39,7 @@ function MedicalRecord({ data }) {
         <div className="flex-btn gap-4">
           <h1 className="text-sm font-medium sm:block hidden">Consultations</h1>
           <div className="sm:w-1/4 w-full">
-            {['admin', 'receptionist'].includes(userRole) && (
+            {['admin', 'receptionist','doctor'].includes(userRole) && (
               <Button
                 label="New Record"
                 Icon={BiPlus}

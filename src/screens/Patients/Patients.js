@@ -52,7 +52,6 @@ function Patients() {
       setLoading(false);
     }
   };
-
   const handleFilterButtonClick = () => {
     const filtered = patients.filter(patient => {
       const createdAt = new Date(patient.created_at);
@@ -72,7 +71,7 @@ function Patients() {
 
     setFilteredPatients(sortedFiltered);
   };
-
+ console.log('filtredpatient',filteredPatients);
   const deletePatient = async (id) => {
     try {
       await axiosInstance.delete(`v1/patient/${id}`, {
@@ -117,6 +116,7 @@ function Patients() {
   const previewPatient = (id) => {
     navigate(`/patients/preview/${id}`);
   };
+
 
   if (loading) {
     return (

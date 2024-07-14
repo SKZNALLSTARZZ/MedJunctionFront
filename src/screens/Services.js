@@ -7,11 +7,50 @@ import { Button, Select } from '../components/Form';
 import { ServiceTable } from '../components/Tables';
 import { servicesData, sortsDatas } from '../components/Datas';
 import AddEditServiceModal from '../components/Modals/AddEditServiceModal';
+import { fetchAllTreatments } from '../services/authService';
+import Loader from '../components/Notifications/Loader';
 
 function Services() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [data, setData] = React.useState({});
-  const [status, setStatus] = React.useState(sortsDatas.service[0]);
+  const [selectedService, setSelectedService] = React.useState(sortsDatas.service[0]);
+  const [selectedSpeciality, setSelectedSpeciality] = React.useState(sortsDatas.service[0]);
+  const [treatment, setTreatment] = React.useState([]);
+  const [service, setService] = React.useState([]);
+  const [speciality, setSpeciality] = React.useState([]);
+  const [treatmentLoading, setTreatmentLoading] = React.useState(true);
+  const [searchText, setSearchText] = React.useState('');
+  const [filteredData, setFilteredData] = React.useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+
+  const fetchTreatment = async () => {
+    try {
+      const response = await fetchAllTreatments(token);
+      setTreatment(response.data.treatments);
+      setSpeciality(response.data.specialities);
+      setService(response.data.services);
+      setTreatmentLoading(false);
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    } finally {
+      setTreatmentLoading(false);
+    }
+  };
+  
+  React.useEffect(() => {
+    fetchTreatment();
+  }, []);
+
+  React.useEffect(() => {
+    const filtered = treatment.filter(item => {
+      const matchesText = item.name.toLowerCase().includes(searchText.toLowerCase());
+      const matchesService = selectedService.name === 'All' || item.service === selectedService.name;
+      const matchesSpecialty = selectedSpeciality.name === 'All' || item.speciality === selectedSpeciality.name;
+      return matchesText && matchesService && matchesSpecialty;
+    });
+    setFilteredData(filtered);
+  }, [treatment, searchText, selectedService,selectedSpeciality]);
 
   const onCloseModal = () => {
     setIsOpen(false);
@@ -22,7 +61,15 @@ function Services() {
     setIsOpen(true);
     setData(datas);
   };
-
+  if (treatmentLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       {isOpen && (
@@ -40,7 +87,7 @@ function Services() {
         <BiPlus className="text-2xl" />
       </button>
       {/*  */}
-      <h1 className="text-xl font-semibold">Services</h1>
+      <h1 className="text-xl font-semibold">Treatments</h1>
       <div
         data-aos="fade-up"
         data-aos-duration="1000"
@@ -56,14 +103,24 @@ function Services() {
               type="text"
               placeholder='Search "teeth cleaning"'
               className="h-14 w-full text-sm text-main rounded-md bg-dry border border-border px-4"
+              onChange={(e) => setSearchText(e.target.value)}
             />
             <Select
-              selectedPerson={status}
-              setSelectedPerson={setStatus}
-              datas={sortsDatas.service}
+              selectedPerson={selectedService}
+              setSelectedPerson={setSelectedService}
+              datas={service}
             >
               <div className="w-full flex-btn text-main text-sm p-4 border bg-dry border-border font-light rounded-lg focus:border focus:border-subMain">
-                {status.name} <BiChevronDown className="text-xl" />
+                {selectedService.name} <BiChevronDown className="text-xl" />
+              </div>
+            </Select>
+            <Select
+              selectedPerson={selectedSpeciality}
+              setSelectedPerson={setSelectedSpeciality}
+              datas={speciality}
+            >
+              <div className="w-full flex-btn text-main text-sm p-4 border bg-dry border-border font-light rounded-lg focus:border focus:border-subMain">
+                {selectedSpeciality.name} <BiChevronDown className="text-xl" />
               </div>
             </Select>
           </div>
@@ -78,7 +135,7 @@ function Services() {
           />
         </div>
         <div className="mt-8 w-full overflow-x-scroll">
-          <ServiceTable data={servicesData.slice(1, 100)} onEdit={onEdit} />
+          <ServiceTable data={filteredData} onEdit={onEdit} />
         </div>
       </div>
     </Layout>

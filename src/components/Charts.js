@@ -97,7 +97,8 @@ export function DashboardSmallChart({ data, colors }) {
   );
 }
 
-export function DashboardBigChart() {
+export function DashboardBigChart({months,monthsCount}) {
+  console.log(months);
   const options = {
     chart: {
       id: 'area-datetime',
@@ -119,20 +120,7 @@ export function DashboardBigChart() {
       },
     },
     xaxis: {
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ],
+      categories:months,
       labels: {
         show: true,
         style: {
@@ -156,7 +144,7 @@ export function DashboardBigChart() {
           fontWeight: 400,
         },
         formatter: function (value) {
-          return value + 'k';
+          return value ;
         },
       },
     },
@@ -204,7 +192,7 @@ export function DashboardBigChart() {
   const series = [
     {
       name: 'Total',
-      data: [30, 40, 25, 50, 49, 21, 70, 51, 42, 60, 40, 20],
+      data: monthsCount,
     },
   ];
 
