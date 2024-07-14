@@ -1,10 +1,13 @@
-import React from 'react';
 import { MenuDatas } from '../components/Datas';
 import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
 
 function Sidebar() {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user.role;
+  const userId = user.patientId;
+
   const currentPath = (path) => {
     const currentPath =
       window.location.pathname.split('/')[1] === path.split('/')[1];
@@ -18,6 +21,7 @@ function Sidebar() {
     item.roles.includes(userRole)
   );
 
+
   return (
     <div className="bg-white xl:shadow-lg py-6 px-4 xl:h-screen w-full border-r border-border">
       <Link to="/">
@@ -30,7 +34,7 @@ function Sidebar() {
       <div className="flex-colo gap-2 mt-12">
         {filteredMenuItems.map((item, index) => (
           <Link
-            to={item.path}
+            to={userRole === 'patient' ? `${item.path.replace(':id', userId)}` : item.path}
             key={index}
             className={`
             ${currentPath(item.path) === item.path ? 'bg-text' : ''}

@@ -101,7 +101,7 @@ export function Transactiontable({ data, action, functions }) {
 }
 
 // invoice table
-export function InvoiceTable({ data }) {
+export function InvoiceTable({ data, isPatient}) {
   const navigate = useNavigate();
   const DropDown1 = [
     {
@@ -126,6 +126,11 @@ export function InvoiceTable({ data }) {
       },
     },
   ];
+
+  const filteredDropDown = isPatient
+  ? DropDown1.filter((item) => item.title !== 'Edit' && item.title !== 'Delete')
+  : DropDown1;
+
   return (
     <table className="table-auto w-full">
       <thead className="bg-dry rounded-md overflow-hidden">
@@ -135,7 +140,7 @@ export function InvoiceTable({ data }) {
           <th className={thclass}>Created Date</th>
           <th className={thclass}>Due Date</th>
           <th className={thclass}>
-            Amout <span className="text-xs font-light">(Tsh)</span>
+            Amout <span className="text-xs font-light">($)</span>
           </th>
           <th className={thclass}>Actions</th>
         </tr>
@@ -151,24 +156,24 @@ export function InvoiceTable({ data }) {
               <div className="flex gap-4 items-center">
                 <span className="w-12">
                   <img
-                    src={item?.to?.image}
-                    alt={item?.to?.title}
+                    //src={item?.to?.image}
+                    alt={item?.name}
                     className="w-full h-12 rounded-full object-cover border border-border"
                   />
                 </span>
                 <div>
-                  <h4 className="text-sm font-medium">{item?.to?.title}</h4>
+                  <h4 className="text-sm font-medium">{item?.patient.name}</h4>
                   <p className="text-xs mt-1 text-textGray">
-                    {item?.to?.email}
+                    {item?.patient.phone}
                   </p>
                 </div>
               </div>
             </td>
-            <td className={tdclass}>{item?.createdDate}</td>
-            <td className={tdclass}>{item?.dueDate}</td>
-            <td className={`${tdclass} font-semibold`}>{item?.total}</td>
+            <td className={tdclass}>{item?.created_at}</td>
+            <td className={tdclass}>{item?.due_date}</td>
+            <td className={`${tdclass} font-semibold`}>{item?.payment.amount}</td>
             <td className={tdclass}>
-              <MenuSelect datas={DropDown1} item={item}>
+              <MenuSelect datas={filteredDropDown} item={item}>
                 <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
                   <BiDotsHorizontalRounded />
                 </div>
@@ -532,10 +537,10 @@ export function AppointmentTable({ data, functions, doctor }) {
             </td>
             <td className={tdclass}>
               <h4 className="text-xs font-medium">
-                {doctor ? item.Patient.name : item.Doctor.title}
+                {doctor ? item.Patient.name : item.Doctor.name}
               </h4>
               <p className="text-xs mt-1 text-textGray">
-                {doctor ? item.Patient.phone : item.Doctor.phone}
+                {doctor ? item.Patient.phone : ''}
               </p>
             </td>
             <td className={tdclass}>
@@ -684,6 +689,20 @@ export function InvoiceUsedTable({ data, functions }) {
 
 // invoice table
 export function InvoiceProductsTable({ data, functions, button }) {
+  const items = [
+    {
+      id: `${data.treatment.name} (Treatment)`,
+      name: data.treatment.name,
+      price: data.treatment.price,
+      quantity: 1,
+    },
+    ...data.prescription.map((prescription, index) => ({
+      id: `${index}.  ${prescription.medicine_name} (Medicine)`,
+      name: prescription.medicine_name,
+      price: prescription.price,
+      quantity: prescription.quantity,
+    }))
+  ];
   return (
     <table className="table-auto w-full">
       <thead className="bg-dry rounded-md overflow-hidden">
@@ -691,26 +710,26 @@ export function InvoiceProductsTable({ data, functions, button }) {
           <th className={thclass}>Item</th>
           <th className={thclass}>
             Item Price
-            <span className="text-xs font-light ml-1">(Tsh)</span>
+            <span className="text-xs font-light ml-1">($)</span>
           </th>
           <th className={thclass}>Quantity</th>
           <th className={thclass}>
             Amout
-            <span className="text-xs font-light ml-1">(Tsh)</span>
+            <span className="text-xs font-light ml-1">($)</span>
           </th>
           {button && <th className={thclass}>Actions</th>}
         </tr>
       </thead>
       <tbody>
-        {data?.map((item) => (
+        {items?.map((item) => (
           <tr
             key={item.id}
             className="border-b border-border hover:bg-greyed transitions"
           >
-            <td className={`${tdclass}  font-medium`}>{item.name}</td>
+            <td className={`${tdclass}  font-medium`}>{item.id}</td>
             <td className={`${tdclass} text-xs`}>{item.price}</td>
-            <td className={tdclass}>{item.id}</td>
-            <td className={tdclass}>{item.price * item.id}</td>
+            <td className={tdclass}>{item.quantity}</td>
+            <td className={tdclass}>{(item.price * item.quantity).toFixed(2)}</td>
             {button && (
               <td className={tdclass}>
                 <button

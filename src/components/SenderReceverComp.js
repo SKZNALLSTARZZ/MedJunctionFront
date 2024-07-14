@@ -9,9 +9,9 @@ function SenderReceverComp({ item, functions, button }) {
           <h1 className="text-md font-semibold">From:</h1>
         </div>
         <div className="flex flex-col gap-2 mt-4">
-          <h6 className="text-xs font-medium">Delight Dental Clinic</h6>
-          <p className="text-xs text-textGray">delightdental@gmail.com</p>
-          <p className="text-xs text-textGray">+ (456) 786, 972, 90</p>
+          <h6 className="text-xs font-medium">TEST MEDICAL CENTER - TMC OUJDA</h6>
+          <p className="text-xs text-textGray">TMC_OUJDA@gmail.com</p>
+          <p className="text-xs text-textGray">+ (212) 536, 972, 90</p>
         </div>
       </div>
       <div className="border border-border rounded-xl p-5">
@@ -27,7 +27,7 @@ function SenderReceverComp({ item, functions, button }) {
           )}
         </div>
         <div className="flex flex-col gap-2 mt-4">
-          <h6 className="text-xs font-medium">{item?.title}</h6>
+          <h6 className="text-xs font-medium">{item?.name}</h6>
           <p className="text-xs text-textGray">{item?.email}</p>
           <p className="text-xs text-textGray">{item?.phone}</p>
         </div>

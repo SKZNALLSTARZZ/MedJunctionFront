@@ -31,6 +31,12 @@ import { BiCalendar, BiUserPlus } from 'react-icons/bi';
 
 export const MenuDatas = [
   {
+    title: 'My file',
+    path: '/patients/preview/:id',
+    icon: HiOutlineHome,
+    roles: ['patient'],
+  },
+  {
     title: 'Dashboard',
     path: '/dashboard',
     icon: HiOutlineHome,
@@ -40,7 +46,7 @@ export const MenuDatas = [
     title: 'Patients',
     path: '/patients',
     icon: TbUsers,
-    roles: ['admin', 'doctor', 'receptionist'],
+    roles: ['admin', 'doctor', 'receptionist', 'nurse'],
   },
   {
     title: 'Receptions',
@@ -65,7 +71,7 @@ export const MenuDatas = [
     title: 'Payments',
     path: '/payments',
     icon: MdListAlt,
-    roles: ['admin', 'receptionist'],
+    roles: ['admin', 'receptionist', 'patient'],
   },
   {
     title: 'Invoices',
@@ -83,7 +89,7 @@ export const MenuDatas = [
     title: 'Medicine',
     path: '/medicine',
     icon: RiMedicineBottleLine,
-    roles: ['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist'],
+    roles: ['admin', 'doctor', 'nurse', 'receptionist', 'pharmacist', 'patient'],
   },
   {
     title: 'Campaigns',

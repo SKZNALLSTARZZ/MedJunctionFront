@@ -8,6 +8,30 @@ const fetchPatientConsultations = async (id, token) => {
     });
 };
 
+const fetchPatientInvoices = async (id, token) => {
+    return axios.get(`v1/patientinvoices/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchInvoiceDetails = async (id, token) => {
+    return axios.get(`v1/invoicedetails/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchInvoices = async (token) => {
+    return axios.get('v1/invoices', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const fetchDoctorPatients = async (token) => {
     return axios.get('v1/consulted-patients', {
         headers: {
@@ -18,6 +42,14 @@ const fetchDoctorPatients = async (token) => {
 
 const fetchDoctorAppointments = async (token) => {
     return axios.get('v1/doctor-appointments', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const fetchPatientAppointments = async (token, id) => {
+    return axios.get(`v1/patientappointments/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -159,4 +191,8 @@ export {
     fecthLastFivePatient,
     fecthTodayAppointments,
     fetchAllTreatments,
+    fetchPatientAppointments,
+    fetchPatientInvoices,
+    fetchInvoices,
+    fetchInvoiceDetails,
 };

@@ -14,7 +14,6 @@ function MedicalRecord({ data }) {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user.role;
   const isUserAuthorized = userRole === 'admin' || userRole === 'receptionist';
-  const [consultationPrice, setConsultationPrice] = useState(0);
   const navigate = useNavigate();
 
   if (!data || data.length === 0) {

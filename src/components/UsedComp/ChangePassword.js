@@ -49,6 +49,7 @@ function ChangePassword() {
       const response = await axiosInstance.put('v1/change_password', {
         old_password: oldPassword,
         new_password: newPassword,
+        new_password_confirmation: confirmPassword,
       }, {
         headers: {
           Authorization: `Bearer ${user.token}`,
