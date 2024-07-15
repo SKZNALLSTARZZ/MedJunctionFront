@@ -49,6 +49,18 @@ export const MenuDatas = [
     roles: ['admin', 'doctor', 'receptionist', 'nurse'],
   },
   {
+    title: 'Pharmacist',
+    path: '/Pharmacist',
+    icon: TbUsers,
+    roles: ['admin'],
+  },
+  {
+    title: 'Nurse',
+    path: '/Nurse',
+    icon: TbUsers,
+    roles: ['admin'],
+  },
+  {
     title: 'Receptions',
     path: '/receptions',
     icon: HiOutlineUsers,

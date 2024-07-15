@@ -7,23 +7,23 @@ import { toast } from 'react-hot-toast';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
 import { LuPaintbrush2 } from "react-icons/lu";
 import axios from 'axios';
-import { parse, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
-function PersonalInfo({ titles, mode, data}) {
+function PersonalInfo({ titles, mode, data }) {
   const [title, setTitle] = React.useState(sortsDatas.title[0]);
   const [birthdate, setBirthdate] = React.useState('');
   const [gender, setGender] = React.useState('');
   const [bloodgrp, setBloodgrp] = React.useState(sortsDatas.bloodTypeFilter[0]);
   const [file, setFile] = React.useState(null);
 
-  //Validation error control
+  // Validation error control
   const [nameError, setNameError] = React.useState('');
   const [phoneError, setPhoneError] = React.useState('');
   const [addressError, setAddressError] = React.useState('');
   const [genderError, setGenderError] = React.useState('');
   const [emailError, setEmailError] = React.useState('');
 
-  //Inputs control
+  // Inputs control
   const [nameValue, setNameValue] = React.useState('');
   const [phoneValue, setPhoneValue] = React.useState('');
   const [addressValue, setAddressValue] = React.useState('');
@@ -53,12 +53,15 @@ function PersonalInfo({ titles, mode, data}) {
 
   const uploadFile = async (file) => {
     try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user.token;
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await axios.post('http://127.0.0.1:8000/api/upload', formData, {
+      const response = await axios.post('http://127.0.0.1:8000/v1/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          Authorization : `Bearer ${token}`
         }
       });
 
@@ -74,7 +77,7 @@ function PersonalInfo({ titles, mode, data}) {
   const onClickButton = (event) => {
     event.preventDefault();
     resetForm();
-  }
+  };
 
   const resetForm = () => {
     setNameValue('');
@@ -82,7 +85,6 @@ function PersonalInfo({ titles, mode, data}) {
     setAddressValue('');
     setEmailValue('');
     setTitle(sortsDatas.title[0]);
-    setBirthdate(new Date());
     setBirthdate('');
     setGender('');
     setBloodgrp(sortsDatas.bloodTypeFilter[0]);
@@ -91,14 +93,18 @@ function PersonalInfo({ titles, mode, data}) {
 
   // Handle form submit
   const handleSubmit = async (event) => {
-    event.preventDefault(); //prevent page reload
-    const form = document.getElementById('form')
+    event.preventDefault(); // prevent page reload
+    const form = document.getElementById('form');
     const formData = new FormData(form);
-    //formData.append('title', title?.name);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user.token;
+
+    // Format the birthdate before appending it to formData
+    const formattedBirthdate = birthdate ? format(new Date(birthdate), 'yyyy-MM-dd') : '';
+
     formData.append('gender', gender?.name);
-    formData.append('blood_group', bloodgrp?.name);
-    formData.append('birthdate', birthdate);
-    formData.append('age', calculateAge(birthdate));
+    formData.append('birthdate', formattedBirthdate);
+
     let imageUrl = null;
     if (file) {
       try {
@@ -106,7 +112,7 @@ function PersonalInfo({ titles, mode, data}) {
         formData.append('img_url', imageUrl);
       } catch (error) {
         console.error('Error uploading file:', error);
-        return; // Break submition
+        return; // Break submission
       }
     }
 
@@ -135,7 +141,7 @@ function PersonalInfo({ titles, mode, data}) {
     } else {
       setEmailError('');
     }
-    if (gender === sortsDatas.genderFilter[0]) {
+    if (gender === sortsDatas.genderFilter[0].name) {
       setGenderError('Please select your gender');
       isValid = false;
     } else {
@@ -146,12 +152,17 @@ function PersonalInfo({ titles, mode, data}) {
     }
 
     console.log([...formData]);
+
     axios
-      .post('http://127.0.0.1:8000/api/Patient/patients', formData)
+      .post('http://127.0.0.1:8000/api/v1/patient', formData, {
+        headers: {
+          Authorization : `Bearer ${token}`
+        }
+      })
       .then((response) => {
         console.log('Response:', response.data);
         resetForm();
-        toast.success('Patient added succesfully!');
+        toast.success('Patient added successfully!');
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -167,7 +178,7 @@ function PersonalInfo({ titles, mode, data}) {
       setGender(data.gender);
       setAddressValue(data.address);
       setBirthdate(parseISO(data?.birthdate));
-    }else if (!isPreview) { 
+    } else if (!isPreview) {
       setGender(sortsDatas.genderFilter[0].name);
     }
 
@@ -229,7 +240,7 @@ function PersonalInfo({ titles, mode, data}) {
                 disabled={isPreview}
               >
                 <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                  {gender} <BiChevronDown className="text-xl" />
+                  {gender.name} <BiChevronDown className="text-xl" />
                 </div>
                 {genderError && <p style={{ color: 'red' }}>{genderError}</p>}
               </Select>

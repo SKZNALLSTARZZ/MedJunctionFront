@@ -21,6 +21,8 @@ import CreatePatient from './screens/Patients/CreatePatient';
 import Doctors from './screens/Doctors/Doctors';
 import DoctorProfile from './screens/Doctors/DoctorProfile';
 import Receptions from './screens/Receptions';
+import Nurse from './screens/Nurse';
+import Pharmacist from './screens/Pharmacist';
 import NewMedicalRecode from './screens/Patients/NewMedicalRecode';
 import NotFound from './screens/NotFound';
 import Login from './screens/Login';
@@ -108,6 +110,26 @@ function App() {
               }
           >
               <Route index element={<Receptions />} />
+          </Route>
+          <Route
+            path="/Nurse"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Nurse />} />
+          </Route>
+          <Route
+            path="/Pharmacist"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedLayout />
+              </ProtectedRoute>
+              }
+          >
+              <Route index element={<Pharmacist />} />
           </Route>
 
           {/* others */}
